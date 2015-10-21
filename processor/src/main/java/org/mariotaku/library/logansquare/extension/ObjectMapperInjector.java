@@ -87,20 +87,23 @@ public class ObjectMapperInjector {
         for (Map.Entry<TypeElement, TypeMirror> entry : initializerInfo.getImplementations().entrySet()) {
             final TypeElement type = entry.getKey();
             final TypeMirror impl = entry.getValue();
+            final TypeMirror erasure = types.erasure(type.asType());
             builder.addStatement("$T.registerTypeConverter($T.class, new $T<$T>($T.class))", LoganSquareWrapper.class,
-                    types.erasure(type.asType()), ImplementationTypeConverter.class, type, impl);
+                    erasure, ImplementationTypeConverter.class, erasure, impl);
         }
         for (Map.Entry<TypeElement, TypeName> entry : initializerInfo.getMappers().entrySet()) {
             final TypeElement type = entry.getKey();
             final TypeName impl = entry.getValue();
+            final TypeMirror erasure = types.erasure(type.asType());
             builder.addStatement("$T.registerTypeConverter($T.class, new $T<$T>($T.class))", LoganSquareWrapper.class,
-                    types.erasure(type.asType()), MapperTypeConverter.class, type, impl);
+                    erasure, MapperTypeConverter.class, erasure, impl);
         }
         for (Map.Entry<TypeElement, TypeName> entry : initializerInfo.getWrappers().entrySet()) {
             final TypeElement type = entry.getKey();
             final TypeName impl = entry.getValue();
+            final TypeMirror erasure = types.erasure(type.asType());
             builder.addStatement("$T.registerTypeConverter($T.class, new $T<$T>($T.class))", LoganSquareWrapper.class,
-                    types.erasure(type.asType()), WrapperTypeConverter.class, type, impl);
+                    erasure, WrapperTypeConverter.class, erasure, impl);
         }
         for (TypeElement type : initializerInfo.getEnums()) {
             builder.addStatement("$T.registerTypeConverter($T.class, new $T<>($T.class))", LoganSquareWrapper.class,
