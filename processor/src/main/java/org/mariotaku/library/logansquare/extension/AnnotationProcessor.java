@@ -77,7 +77,6 @@ public class AnnotationProcessor extends AbstractProcessor {
     @Override
     public boolean process(Set<? extends TypeElement> elements, RoundEnvironment env) {
         try {
-            processingEnv.getMessager().printMessage(ERROR, "Processing " + elements);
             for (Processor processor : mProcessors) {
                 processor.findAndParseObjects(env, mInitializerInfo, mElementUtils, mTypeUtils);
             }
@@ -86,7 +85,6 @@ public class AnnotationProcessor extends AbstractProcessor {
 
             if (!initializerInfo.fileCreated) {
                 initializerInfo.fileCreated = true;
-
                 try {
                     JavaFileObject jfo = mFiler.createSourceFile(initializerInfo.name);
                     Writer writer = jfo.openWriter();

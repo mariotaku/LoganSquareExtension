@@ -20,7 +20,11 @@
 package org.mariotaku.library.logansquare.extension;
 
 import com.squareup.javapoet.JavaFile;
+import com.squareup.javapoet.MethodSpec;
+import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
+
+import javax.lang.model.element.Modifier;
 
 /**
  * Created by mariotaku on 15/10/21.
@@ -44,6 +48,15 @@ public class ObjectMapperInjector {
 
     private TypeSpec getTypeSpec() {
         TypeSpec.Builder builder = TypeSpec.classBuilder("LoganSquareWrapperInitializer");
+        builder.addModifiers(Modifier.PUBLIC);
+        builder.addMethod(getAddImplementationsSpec());
+        return builder.build();
+    }
+
+    private MethodSpec getAddImplementationsSpec() {
+        MethodSpec.Builder builder = MethodSpec.methodBuilder("addImplementations");
+        builder.addModifiers(Modifier.PUBLIC, Modifier.STATIC);
+        builder.returns(TypeName.VOID);
         return builder.build();
     }
 }
