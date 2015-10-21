@@ -19,7 +19,6 @@
 
 package org.mariotaku.library.logansquare.extension.processor;
 
-import com.bluelinelabs.logansquare.Constants;
 import org.mariotaku.library.logansquare.extension.LoganSquareWrapperInitializerInfo;
 import org.mariotaku.library.logansquare.extension.annotation.Implementation;
 import org.mariotaku.library.logansquare.extension.annotation.Mapper;
@@ -38,20 +37,20 @@ import static javax.lang.model.element.Modifier.PRIVATE;
 /**
  * Created by mariotaku on 15/10/21.
  */
-public class ImplementationClassProcessor extends Processor {
+public class MapperClassProcessor extends Processor {
 
-    public ImplementationClassProcessor(ProcessingEnvironment processingEnv) {
+    public MapperClassProcessor(ProcessingEnvironment processingEnv) {
         super(processingEnv);
     }
 
     @Override
     public Class getAnnotation() {
-        return Implementation.class;
+        return Mapper.class;
     }
 
     @Override
     public void findAndParseObjects(RoundEnvironment env, LoganSquareWrapperInitializerInfo initializerInfo, Elements elements, Types types) {
-        for (Element element : env.getElementsAnnotatedWith(Implementation.class)) {
+        for (Element element : env.getElementsAnnotatedWith(Mapper.class)) {
             processImplementationAnnotation(element, initializerInfo, elements, types);
         }
     }
@@ -62,32 +61,15 @@ public class ImplementationClassProcessor extends Processor {
         if (element.getModifiers().contains(PRIVATE)) {
             error(element, "%s: %s annotation can't be used on private classes.", type.getQualifiedName(), getAnnotation().getSimpleName());
         }
-        final Implementation implAnnotation = type.getAnnotation(Implementation.class);
-        TypeMirror implCls = null;
+        final Mapper annotation = type.getAnnotation(Mapper.class);
+        TypeMirror impl = null;
         try {
-            implAnnotation.value();
+            annotation.value();
         } catch (MirroredTypeException e) {
-            implCls = e.getTypeMirror();
+            impl = e.getTypeMirror();
         }
-        if (implCls != null) {
-            initializerInfo.putImplementation(type, implCls);
-            final Mapper mapperAnnotation = implCls.getAnnotation(Mapper.class);
-            TypeMirror mapperCls = null;
-            try {
-                mapperAnnotation.value();
-            } catch (MirroredTypeException e) {
-                mapperCls = e.getTypeMirror();
-            }
-            if (mapperCls == null) {
-                try {
-                    mapperCls = elements.getTypeElement(implCls.toString() + Constants.MAPPER_CLASS_SUFFIX).asType();
-                } catch (MirroredTypeException e) {
-                    mapperCls = e.getTypeMirror();
-                }
-            }
-            if (mapperCls != null) {
-                initializerInfo.putMapper(type, mapperCls);
-            }
+        if (impl != null) {
+            initializerInfo.putMapper(type, impl);
         }
     }
 }

@@ -51,16 +51,32 @@ public class ObjectMapperInjector {
     private TypeSpec getTypeSpec() {
         TypeSpec.Builder builder = TypeSpec.classBuilder("LoganSquareWrapperInitializer");
         builder.addModifiers(Modifier.PUBLIC);
-        builder.addStaticBlock(getAddImplementationsCode());
+        builder.addStaticBlock(getRegisterMappersCode());
+        builder.addStaticBlock(getRegisterConverterCode());
         return builder.build();
     }
 
-    private CodeBlock getAddImplementationsCode() {
+    private CodeBlock getRegisterMappersCode() {
         final CodeBlock.Builder builder = CodeBlock.builder();
         for (Map.Entry<TypeElement, TypeMirror> entry : initializerInfo.getMappers().entrySet()) {
             final TypeElement type = entry.getKey();
+            final TypeMirror mapper = entry.getValue();
+            builder.addStatement("$T.registerJsonMapper($T.class, $T.class)", LoganSquareWrapper.class, type, mapper);
+        }
+        return builder.build();
+    }
+
+    private CodeBlock getRegisterConverterCode() {
+        final CodeBlock.Builder builder = CodeBlock.builder();
+        for (Map.Entry<TypeElement, TypeMirror> entry : initializerInfo.getImplementations().entrySet()) {
+            final TypeElement type = entry.getKey();
             final TypeMirror impl = entry.getValue();
-            builder.addStatement("$T.registerJsonMapper($T.class, $T.class)", LoganSquareWrapper.class, type, impl);
+            builder.addStatement("$T.registerTypeConverter($T.class, new $T<>($T.class))", LoganSquareWrapper.class, type,
+                    TypeConverterMapper.class, impl);
+        }
+        for (TypeElement type : initializerInfo.getEnums()) {
+            builder.addStatement("$T.registerTypeConverter($T.class, new $T<>($T.class))", LoganSquareWrapper.class, type,
+                    EnumConverter.class, type);
         }
         return builder.build();
     }

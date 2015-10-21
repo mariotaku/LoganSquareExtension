@@ -22,30 +22,48 @@ package org.mariotaku.library.logansquare.extension;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.TypeMirror;
 import java.util.HashMap;
+import java.util.HashSet;
 
 /**
  * Created by mariotaku on 15/10/21.
  */
 public class LoganSquareWrapperInitializerInfo {
-    public boolean fileCreated;
     public final String name = getInitializerClassName();
-
-    public String getName() {
-        return name;
-    }
-
+    public boolean fileCreated;
     public HashMap<TypeElement, TypeMirror> mappers = new HashMap<>();
-
-    public HashMap<TypeElement, TypeMirror> getMappers() {
-        return mappers;
-    }
+    public HashMap<TypeElement, TypeMirror> implementations = new HashMap<>();
+    public HashSet<TypeElement> enums = new HashSet<>();
 
     private static String getInitializerClassName() {
         final Class<LoganSquareWrapper> cls = LoganSquareWrapper.class;
         return cls.getPackage().getName() + "." + cls.getSimpleName() + "Initializer";
     }
 
+    public HashSet<TypeElement> getEnums() {
+        return enums;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public HashMap<TypeElement, TypeMirror> getImplementations() {
+        return implementations;
+    }
+
+    public HashMap<TypeElement, TypeMirror> getMappers() {
+        return mappers;
+    }
+
+    public void putMapper(TypeElement type, TypeMirror mapper) {
+        mappers.put(type, mapper);
+    }
+
     public void putImplementation(TypeElement type, TypeMirror impl) {
-        mappers.put(type, impl);
+        implementations.put(type, impl);
+    }
+
+    public void putEnum(TypeElement type) {
+        enums.add(type);
     }
 }

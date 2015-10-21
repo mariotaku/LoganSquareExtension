@@ -19,17 +19,13 @@
 
 package org.mariotaku.library.logansquare.extension.processor;
 
-import com.bluelinelabs.logansquare.Constants;
 import org.mariotaku.library.logansquare.extension.LoganSquareWrapperInitializerInfo;
-import org.mariotaku.library.logansquare.extension.annotation.Implementation;
-import org.mariotaku.library.logansquare.extension.annotation.Mapper;
+import org.mariotaku.library.logansquare.extension.annotation.Enum;
 
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
-import javax.lang.model.type.MirroredTypeException;
-import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 
@@ -38,20 +34,20 @@ import static javax.lang.model.element.Modifier.PRIVATE;
 /**
  * Created by mariotaku on 15/10/21.
  */
-public class ImplementationClassProcessor extends Processor {
+public class EnumClassProcessor extends Processor {
 
-    public ImplementationClassProcessor(ProcessingEnvironment processingEnv) {
+    public EnumClassProcessor(ProcessingEnvironment processingEnv) {
         super(processingEnv);
     }
 
     @Override
     public Class getAnnotation() {
-        return Implementation.class;
+        return Enum.class;
     }
 
     @Override
     public void findAndParseObjects(RoundEnvironment env, LoganSquareWrapperInitializerInfo initializerInfo, Elements elements, Types types) {
-        for (Element element : env.getElementsAnnotatedWith(Implementation.class)) {
+        for (Element element : env.getElementsAnnotatedWith(Enum.class)) {
             processImplementationAnnotation(element, initializerInfo, elements, types);
         }
     }
@@ -62,32 +58,6 @@ public class ImplementationClassProcessor extends Processor {
         if (element.getModifiers().contains(PRIVATE)) {
             error(element, "%s: %s annotation can't be used on private classes.", type.getQualifiedName(), getAnnotation().getSimpleName());
         }
-        final Implementation implAnnotation = type.getAnnotation(Implementation.class);
-        TypeMirror implCls = null;
-        try {
-            implAnnotation.value();
-        } catch (MirroredTypeException e) {
-            implCls = e.getTypeMirror();
-        }
-        if (implCls != null) {
-            initializerInfo.putImplementation(type, implCls);
-            final Mapper mapperAnnotation = implCls.getAnnotation(Mapper.class);
-            TypeMirror mapperCls = null;
-            try {
-                mapperAnnotation.value();
-            } catch (MirroredTypeException e) {
-                mapperCls = e.getTypeMirror();
-            }
-            if (mapperCls == null) {
-                try {
-                    mapperCls = elements.getTypeElement(implCls.toString() + Constants.MAPPER_CLASS_SUFFIX).asType();
-                } catch (MirroredTypeException e) {
-                    mapperCls = e.getTypeMirror();
-                }
-            }
-            if (mapperCls != null) {
-                initializerInfo.putMapper(type, mapperCls);
-            }
-        }
+        initializerInfo.putEnum(type);
     }
 }
