@@ -30,6 +30,7 @@ import org.mariotaku.library.logansquare.extension.annotation.Wrapper;
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.Element;
+import javax.lang.model.element.Name;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.MirroredTypeException;
 import javax.lang.model.type.TypeMirror;
@@ -106,7 +107,8 @@ public class ImplementationClassProcessor extends Processor {
     private TypeName getMapperClass(Elements elements, Types types, TypeMirror implCls) {
         final Element element = types.asElement(implCls);
         final String packageName = String.valueOf(elements.getPackageOf(element).getQualifiedName());
-        String implClsSimpleName = String.valueOf(element.getSimpleName()).replace('.', '$');
+        final Name binaryName = elements.getBinaryName((TypeElement) element);
+        CharSequence implClsSimpleName = binaryName.subSequence(packageName.length() + 1, binaryName.length());
         return ClassName.get(packageName, implClsSimpleName + Constants.MAPPER_CLASS_SUFFIX);
     }
 }
