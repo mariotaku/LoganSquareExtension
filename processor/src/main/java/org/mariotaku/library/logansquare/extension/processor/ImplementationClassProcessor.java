@@ -73,10 +73,12 @@ public class ImplementationClassProcessor extends Processor {
             initializerInfo.putImplementation(type, implCls);
             final Mapper mapperAnnotation = implCls.getAnnotation(Mapper.class);
             TypeMirror mapperCls = null;
-            try {
-                mapperAnnotation.value();
-            } catch (MirroredTypeException e) {
-                mapperCls = e.getTypeMirror();
+            if (mapperAnnotation != null) {
+                try {
+                    mapperAnnotation.value();
+                } catch (MirroredTypeException e) {
+                    mapperCls = e.getTypeMirror();
+                }
             }
             if (mapperCls == null) {
                 try {
