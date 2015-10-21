@@ -20,7 +20,7 @@
 package org.mariotaku.library.logansquare.extension.processor;
 
 import org.mariotaku.library.logansquare.extension.LoganSquareWrapperInitializerInfo;
-import org.mariotaku.library.logansquare.extension.annotation.Enum;
+import org.mariotaku.library.logansquare.extension.annotation.EnumClass;
 
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
@@ -42,12 +42,12 @@ public class EnumClassProcessor extends Processor {
 
     @Override
     public Class getAnnotation() {
-        return Enum.class;
+        return EnumClass.class;
     }
 
     @Override
     public void findAndParseObjects(RoundEnvironment env, LoganSquareWrapperInitializerInfo initializerInfo, Elements elements, Types types) {
-        for (Element element : env.getElementsAnnotatedWith(Enum.class)) {
+        for (Element element : env.getElementsAnnotatedWith(EnumClass.class)) {
             processImplementationAnnotation(element, initializerInfo, elements, types);
         }
     }
