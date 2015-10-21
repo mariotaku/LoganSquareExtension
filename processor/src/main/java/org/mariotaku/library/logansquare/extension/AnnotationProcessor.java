@@ -75,7 +75,7 @@ public class AnnotationProcessor extends AbstractProcessor {
     }
 
     @Override
-    public boolean process(Set<? extends TypeElement> elements, RoundEnvironment env) {
+    public boolean process(Set<? extends TypeElement> elementsSet, RoundEnvironment env) {
         try {
             for (Processor processor : mProcessors) {
                 processor.findAndParseObjects(env, mInitializerInfo, mElementUtils, mTypeUtils);
@@ -88,7 +88,7 @@ public class AnnotationProcessor extends AbstractProcessor {
                 try {
                     JavaFileObject jfo = mFiler.createSourceFile(initializerInfo.name);
                     Writer writer = jfo.openWriter();
-                    writer.write(new ObjectMapperInjector(initializerInfo).getJavaClassFile());
+                    writer.write(new ObjectMapperInjector(initializerInfo).getJavaClassFile(mTypeUtils));
                     writer.flush();
                     writer.close();
                 } catch (IOException e) {

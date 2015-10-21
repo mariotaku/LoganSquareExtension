@@ -26,6 +26,7 @@ import com.squareup.javapoet.TypeSpec;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.TypeMirror;
+import javax.lang.model.util.Types;
 import java.util.Map;
 
 /**
@@ -39,55 +40,57 @@ public class ObjectMapperInjector {
     }
 
 
-    public String getJavaClassFile() {
+    public String getJavaClassFile(Types types) {
         try {
-            return JavaFile.builder(LoganSquareWrapper.class.getPackage().getName(), getTypeSpec()).build().toString();
+            return JavaFile.builder(LoganSquareWrapper.class.getPackage().getName(), getTypeSpec(types)).build().toString();
         } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
     }
 
-    private TypeSpec getTypeSpec() {
+    private TypeSpec getTypeSpec(Types types) {
         TypeSpec.Builder builder = TypeSpec.classBuilder("LoganSquareWrapperInitializer");
         builder.addModifiers(Modifier.PUBLIC);
-        builder.addStaticBlock(getRegisterMappersCode());
-        builder.addStaticBlock(getRegisterConverterCode());
-        builder.addStaticBlock(getRegisterWrappersCode());
+        builder.addStaticBlock(getRegisterMappersCode(types));
+        builder.addStaticBlock(getRegisterConverterCode(types));
+        builder.addStaticBlock(getRegisterWrappersCode(types));
         return builder.build();
     }
 
-    private CodeBlock getRegisterMappersCode() {
+    private CodeBlock getRegisterMappersCode(Types types) {
         final CodeBlock.Builder builder = CodeBlock.builder();
         for (Map.Entry<TypeElement, String> entry : initializerInfo.getMappers().entrySet()) {
             final TypeElement type = entry.getKey();
             final String mapperName = entry.getValue();
-            builder.addStatement("$T.registerJsonMapperForName($T.class, \"$L\")", LoganSquareWrapper.class, type, mapperName);
+            builder.addStatement("$T.registerJsonMapperForName($T.class, \"$L\")", LoganSquareWrapper.class,
+                    types.erasure(type.asType()), mapperName);
         }
         return builder.build();
     }
 
-    private CodeBlock getRegisterWrappersCode() {
+    private CodeBlock getRegisterWrappersCode(Types types) {
         final CodeBlock.Builder builder = CodeBlock.builder();
         for (Map.Entry<TypeElement, String> entry : initializerInfo.getWrappers().entrySet()) {
             final TypeElement type = entry.getKey();
             final String wrapperName = entry.getValue();
-            builder.addStatement("$T.registerWrapperForName($T.class, \"$L\")", LoganSquareWrapper.class, type, wrapperName);
+            builder.addStatement("$T.registerWrapperForName($T.class, \"$L\")", LoganSquareWrapper.class,
+                    types.erasure(type.asType()), wrapperName);
         }
         return builder.build();
     }
 
-    private CodeBlock getRegisterConverterCode() {
+    private CodeBlock getRegisterConverterCode(Types types) {
         final CodeBlock.Builder builder = CodeBlock.builder();
         for (Map.Entry<TypeElement, TypeMirror> entry : initializerInfo.getImplementations().entrySet()) {
             final TypeElement type = entry.getKey();
             final TypeMirror impl = entry.getValue();
-            builder.addStatement("$T.registerTypeConverter($T.class, new $T<$T>($T.class))", LoganSquareWrapper.class, type,
-                    TypeConverterMapper.class, type, impl);
+            builder.addStatement("$T.registerTypeConverter($T.class, new $T<$T>($T.class))", LoganSquareWrapper.class,
+                    types.erasure(type.asType()), TypeConverterMapper.class, type, impl);
         }
         for (TypeElement type : initializerInfo.getEnums()) {
-            builder.addStatement("$T.registerTypeConverter($T.class, new $T<>($T.class))", LoganSquareWrapper.class, type,
-                    EnumConverter.class, type);
+            builder.addStatement("$T.registerTypeConverter($T.class, new $T<>($T.class))", LoganSquareWrapper.class,
+                    types.erasure(type.asType()), EnumConverter.class, type);
         }
         return builder.build();
     }
