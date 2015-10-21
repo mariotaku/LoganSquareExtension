@@ -58,6 +58,7 @@ public class ImplementationClassProcessor extends Processor {
         if (element.getModifiers().contains(PRIVATE)) {
             error(element, "%s: %s annotation can't be used on private classes.", typeElement.getQualifiedName(), getAnnotation().getSimpleName());
         }
+        initializerInfo.putImplementation(typeElement, typeElement.getAnnotation(Implementation.class).value());
 
 
     }

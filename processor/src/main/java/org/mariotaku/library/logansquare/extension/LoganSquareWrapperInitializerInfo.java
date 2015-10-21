@@ -19,15 +19,32 @@
 
 package org.mariotaku.library.logansquare.extension;
 
+import javax.lang.model.element.TypeElement;
+import java.util.HashMap;
+
 /**
  * Created by mariotaku on 15/10/21.
  */
 public class LoganSquareWrapperInitializerInfo {
     public boolean fileCreated;
-    public String name = getInitializerClassName();
+    public final String name = getInitializerClassName();
+
+    public String getName() {
+        return name;
+    }
+
+    public HashMap<TypeElement, Class<?>> mappers = new HashMap<>();
+
+    public HashMap<TypeElement, Class<?>> getMappers() {
+        return mappers;
+    }
 
     private static String getInitializerClassName() {
         final Class<LoganSquareWrapper> cls = LoganSquareWrapper.class;
         return cls.getPackage().getName() + "." + cls.getSimpleName() + "Initializer";
+    }
+
+    public void putImplementation(TypeElement typeElement, Class<?> value) {
+        mappers.put(typeElement, value);
     }
 }

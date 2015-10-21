@@ -23,7 +23,6 @@ import com.bluelinelabs.logansquare.Constants;
 import com.bluelinelabs.logansquare.JsonMapper;
 import com.bluelinelabs.logansquare.LoganSquare;
 import com.bluelinelabs.logansquare.NoSuchMapperException;
-
 import org.mariotaku.library.logansquare.extension.annotation.Implementation;
 import org.mariotaku.library.logansquare.extension.annotation.Mapper;
 
@@ -38,6 +37,14 @@ import java.util.Map;
  * Created by mariotaku on 15/10/21.
  */
 public class LoganSquareWrapper extends LoganSquare {
+
+    static {
+        try {
+            Class.forName(LoganSquareWrapper.class.getName() + "Initializer");
+        } catch (ClassNotFoundException ignore) {
+
+        }
+    }
 
     /**
      * Parse an object from an InputStream.
