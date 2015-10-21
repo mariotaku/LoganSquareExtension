@@ -178,7 +178,7 @@ public class LoganSquareWrapper extends LoganSquare {
         getObjectMappers().put(cls, mapper);
     }
 
-    public static <E> void registerJsonMapper(Class<E> cls, Class<? extends JsonMapper<E>> mapperCls) {
+    public static <E> void registerJsonMapper(Class<E> cls, Class<? extends JsonMapper<? extends E>> mapperCls) {
         try {
             getObjectMappers().put(cls, (JsonMapper) mapperCls.newInstance());
         } catch (Exception e) {
