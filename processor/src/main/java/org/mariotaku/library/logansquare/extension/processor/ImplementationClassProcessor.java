@@ -87,8 +87,8 @@ public class ImplementationClassProcessor extends Processor {
             }
             if (mapperCls == null) {
                 final String mapperClass = getMapperClass(elements, types, implCls);
-                mProcessingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, mapperClass);
                 mapperCls = elements.getTypeElement(mapperClass);
+                mProcessingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, mapperCls.toString());
             }
             initializerInfo.putMapper(type, mapperCls);
             if (wrapperAnnotation != null) {
