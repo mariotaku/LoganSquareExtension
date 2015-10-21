@@ -88,7 +88,7 @@ public class AnnotationProcessor extends AbstractProcessor {
                 try {
                     JavaFileObject jfo = mFiler.createSourceFile(initializerInfo.name);
                     Writer writer = jfo.openWriter();
-                    writer.write(new ObjectMapperInjector(initializerInfo).getJavaClassFile(mTypeUtils));
+                    writer.write(new ObjectMapperInjector(initializerInfo).getJavaClassFile(mElementUtils, mTypeUtils));
                     writer.flush();
                     writer.close();
                 } catch (IOException e) {

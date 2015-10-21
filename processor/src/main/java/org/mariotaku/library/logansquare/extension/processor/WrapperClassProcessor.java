@@ -61,11 +61,11 @@ public class WrapperClassProcessor extends Processor {
             error(element, "%s: %s annotation can't be used on private classes.", type.getQualifiedName(), getAnnotation().getSimpleName());
         }
         final Wrapper annotation = type.getAnnotation(Wrapper.class);
-        String wrapper = null;
+        Element wrapper = null;
         try {
             annotation.value();
         } catch (MirroredTypeException e) {
-            wrapper = e.getTypeMirror().toString();
+            wrapper = types.asElement(e.getTypeMirror());
         }
         if (wrapper != null) {
             initializerInfo.putWrapper(type, wrapper);

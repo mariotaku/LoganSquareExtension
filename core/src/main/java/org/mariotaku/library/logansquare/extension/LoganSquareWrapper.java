@@ -186,10 +186,9 @@ public class LoganSquareWrapper extends LoganSquare {
         }
     }
 
-    public static <E> void registerWrapperForName(Class<E> cls, String mapperCls) {
+    public static <E> void registerWrapper(Class<E> cls, Class<? extends ModelWrapper> wrapperCls) {
         try {
-            //noinspection unchecked
-            OBJECT_WRAPPERS.put(cls, (Class<? extends ModelWrapper>) Class.forName(mapperCls));
+            OBJECT_WRAPPERS.put(cls, wrapperCls);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

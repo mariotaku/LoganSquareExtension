@@ -61,11 +61,11 @@ public class MapperClassProcessor extends Processor {
             error(element, "%s: %s annotation can't be used on private classes.", type.getQualifiedName(), getAnnotation().getSimpleName());
         }
         final Mapper annotation = type.getAnnotation(Mapper.class);
-        String mapper = null;
+        Element mapper = null;
         try {
             annotation.value();
         } catch (MirroredTypeException e) {
-            mapper = e.getTypeMirror().toString();
+            mapper = types.asElement(e.getTypeMirror());
         }
         if (mapper != null) {
             initializerInfo.putMapper(type, mapper);

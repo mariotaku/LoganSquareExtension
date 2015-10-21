@@ -33,6 +33,7 @@ import javax.lang.model.type.MirroredTypeException;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
+import javax.tools.Diagnostic;
 import java.lang.annotation.Annotation;
 
 import static javax.lang.model.element.Modifier.PRIVATE;
@@ -76,28 +77,35 @@ public class ImplementationClassProcessor extends Processor {
             final TypeElement implElement = elements.getTypeElement(implCls.toString());
             final Mapper mapperAnnotation = implElement.getAnnotation(Mapper.class);
             final Wrapper wrapperAnnotation = implElement.getAnnotation(Wrapper.class);
-            String mapperCls = null, wrapperCls = null;
+            Element mapperCls = null, wrapperCls = null;
             if (mapperAnnotation != null) {
                 try {
                     mapperAnnotation.value();
                 } catch (MirroredTypeException e) {
-                    mapperCls = e.getTypeMirror().toString();
+                    mapperCls = types.asElement(e.getTypeMirror());
                 }
             }
             if (mapperCls == null) {
-                mapperCls = implCls.toString() + Constants.MAPPER_CLASS_SUFFIX;
+                final String mapperClass = getMapperClass(elements, types, implCls);
+                mProcessingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, mapperClass);
+                mapperCls = elements.getTypeElement(mapperClass);
             }
             initializerInfo.putMapper(type, mapperCls);
             if (wrapperAnnotation != null) {
                 try {
                     wrapperAnnotation.value();
                 } catch (MirroredTypeException e) {
-                    wrapperCls = e.getTypeMirror().toString();
+                    wrapperCls = types.asElement(e.getTypeMirror());
                 }
             }
             if (wrapperCls != null) {
                 initializerInfo.putWrapper(type, wrapperCls);
             }
         }
+    }
+
+    private String getMapperClass(Elements elements, Types types, TypeMirror implCls) {
+        final TypeElement element = (TypeElement) types.asElement(implCls);
+        return elements.getBinaryName(element) + Constants.MAPPER_CLASS_SUFFIX;
     }
 }

@@ -23,9 +23,11 @@ import com.squareup.javapoet.CodeBlock;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.TypeSpec;
 
+import javax.lang.model.element.Element;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.TypeMirror;
+import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 import java.util.Map;
 
@@ -40,47 +42,47 @@ public class ObjectMapperInjector {
     }
 
 
-    public String getJavaClassFile(Types types) {
+    public String getJavaClassFile(Elements elements, Types types) {
         try {
-            return JavaFile.builder(LoganSquareWrapper.class.getPackage().getName(), getTypeSpec(types)).build().toString();
+            return JavaFile.builder(LoganSquareWrapper.class.getPackage().getName(), getTypeSpec(elements,types)).build().toString();
         } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
     }
 
-    private TypeSpec getTypeSpec(Types types) {
+    private TypeSpec getTypeSpec(Elements elements, Types types) {
         TypeSpec.Builder builder = TypeSpec.classBuilder("LoganSquareWrapperInitializer");
         builder.addModifiers(Modifier.PUBLIC);
-        builder.addStaticBlock(getRegisterMappersCode(types));
-        builder.addStaticBlock(getRegisterConverterCode(types));
-        builder.addStaticBlock(getRegisterWrappersCode(types));
+        builder.addStaticBlock(getRegisterMappersCode(elements, types));
+        builder.addStaticBlock(getRegisterConverterCode(elements, types));
+        builder.addStaticBlock(getRegisterWrappersCode(elements, types));
         return builder.build();
     }
 
-    private CodeBlock getRegisterMappersCode(Types types) {
+    private CodeBlock getRegisterMappersCode(Elements elements, Types types) {
         final CodeBlock.Builder builder = CodeBlock.builder();
-        for (Map.Entry<TypeElement, String> entry : initializerInfo.getMappers().entrySet()) {
+        for (Map.Entry<TypeElement, Element> entry : initializerInfo.getMappers().entrySet()) {
             final TypeElement type = entry.getKey();
-            final String mapperName = entry.getValue();
-            builder.addStatement("$T.registerJsonMapperForName($T.class, \"$L\")", LoganSquareWrapper.class,
-                    types.erasure(type.asType()), mapperName);
+            final Element mapper = entry.getValue();
+            builder.addStatement("$T.registerJsonMapperForName($T.class, $T.class)", LoganSquareWrapper.class,
+                    types.erasure(type.asType()), mapper);
         }
         return builder.build();
     }
 
-    private CodeBlock getRegisterWrappersCode(Types types) {
+    private CodeBlock getRegisterWrappersCode(Elements elements, Types types) {
         final CodeBlock.Builder builder = CodeBlock.builder();
-        for (Map.Entry<TypeElement, String> entry : initializerInfo.getWrappers().entrySet()) {
+        for (Map.Entry<TypeElement, Element> entry : initializerInfo.getWrappers().entrySet()) {
             final TypeElement type = entry.getKey();
-            final String wrapperName = entry.getValue();
-            builder.addStatement("$T.registerWrapperForName($T.class, \"$L\")", LoganSquareWrapper.class,
-                    types.erasure(type.asType()), wrapperName);
+            final Element wrapper = entry.getValue();
+            builder.addStatement("$T.registerWrapper($T.class, $T.class)", LoganSquareWrapper.class,
+                    types.erasure(type.asType()), wrapper);
         }
         return builder.build();
     }
 
-    private CodeBlock getRegisterConverterCode(Types types) {
+    private CodeBlock getRegisterConverterCode(Elements elements, Types types) {
         final CodeBlock.Builder builder = CodeBlock.builder();
         for (Map.Entry<TypeElement, TypeMirror> entry : initializerInfo.getImplementations().entrySet()) {
             final TypeElement type = entry.getKey();
