@@ -1,0 +1,12 @@
+apply plugin: 'maven'
+
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'maven'
+
+    version = '0.9'
+}
+
+repositories {
+    mavenCentral()
+}

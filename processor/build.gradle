@@ -1,0 +1,14 @@
+group 'org.mariotaku.logansquare.extension'
+
+apply plugin: 'java'
+
+ext.artifactId = 'logansquare-extension-processor'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile 'com.squareup:javapoet:1.0.0'
+    compile project(':core')
+}
