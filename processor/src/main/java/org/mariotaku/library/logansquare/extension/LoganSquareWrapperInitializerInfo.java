@@ -20,6 +20,7 @@
 package org.mariotaku.library.logansquare.extension;
 
 import javax.lang.model.element.TypeElement;
+import javax.lang.model.type.TypeMirror;
 import java.util.HashMap;
 
 /**
@@ -33,9 +34,9 @@ public class LoganSquareWrapperInitializerInfo {
         return name;
     }
 
-    public HashMap<TypeElement, Class<?>> mappers = new HashMap<>();
+    public HashMap<TypeElement, TypeMirror> mappers = new HashMap<>();
 
-    public HashMap<TypeElement, Class<?>> getMappers() {
+    public HashMap<TypeElement, TypeMirror> getMappers() {
         return mappers;
     }
 
@@ -44,7 +45,7 @@ public class LoganSquareWrapperInitializerInfo {
         return cls.getPackage().getName() + "." + cls.getSimpleName() + "Initializer";
     }
 
-    public void putImplementation(TypeElement typeElement, Class<?> value) {
-        mappers.put(typeElement, value);
+    public void putImplementation(TypeElement type, TypeMirror impl) {
+        mappers.put(type, impl);
     }
 }

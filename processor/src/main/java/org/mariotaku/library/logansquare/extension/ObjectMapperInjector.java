@@ -25,6 +25,7 @@ import com.squareup.javapoet.TypeSpec;
 
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
+import javax.lang.model.type.TypeMirror;
 import java.util.Map;
 
 /**
@@ -56,9 +57,9 @@ public class ObjectMapperInjector {
 
     private CodeBlock getAddImplementationsCode() {
         final CodeBlock.Builder builder = CodeBlock.builder();
-        for (Map.Entry<TypeElement, Class<?>> entry : initializerInfo.getMappers().entrySet()) {
+        for (Map.Entry<TypeElement, TypeMirror> entry : initializerInfo.getMappers().entrySet()) {
             final TypeElement type = entry.getKey();
-            final Class<?> impl = entry.getValue();
+            final TypeMirror impl = entry.getValue();
             builder.addStatement("$T.registerJsonMapper(%T.class, %T.class)", LoganSquareWrapper.class, type, impl);
         }
         return builder.build();

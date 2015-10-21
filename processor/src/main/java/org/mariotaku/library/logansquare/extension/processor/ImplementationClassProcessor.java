@@ -26,6 +26,7 @@ import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
+import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 
@@ -53,12 +54,14 @@ public class ImplementationClassProcessor extends Processor {
     }
 
     private void processImplementationAnnotation(Element element, LoganSquareWrapperInitializerInfo initializerInfo, Elements elements, Types types) {
-        TypeElement typeElement = (TypeElement) element;
+        TypeElement type = (TypeElement) element;
 
         if (element.getModifiers().contains(PRIVATE)) {
-            error(element, "%s: %s annotation can't be used on private classes.", typeElement.getQualifiedName(), getAnnotation().getSimpleName());
+            error(element, "%s: %s annotation can't be used on private classes.", type.getQualifiedName(), getAnnotation().getSimpleName());
         }
-        initializerInfo.putImplementation(typeElement, typeElement.getAnnotation(Implementation.class).value());
+        final Implementation annotation = type.getAnnotation(Implementation.class);
+        final TypeMirror impl = mProcessingEnv.getElementUtils().getTypeElement(annotation.value().getCanonicalName()).asType();
+        initializerInfo.putImplementation(type, impl);
 
 
     }
