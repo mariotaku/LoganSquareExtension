@@ -88,13 +88,13 @@ public class ObjectMapperInjector {
             final TypeElement type = entry.getKey();
             final TypeMirror impl = entry.getValue();
             builder.addStatement("$T.registerTypeConverter($T.class, new $T<$T>($T.class))", LoganSquareWrapper.class,
-                    types.erasure(type.asType()), TypeConverterMapper.class, type, impl);
+                    types.erasure(type.asType()), ImplementationTypeConverter.class, type, impl);
         }
         for (Map.Entry<TypeElement, TypeName> entry : initializerInfo.getMappers().entrySet()) {
             final TypeElement type = entry.getKey();
             final TypeName impl = entry.getValue();
             builder.addStatement("$T.registerTypeConverter($T.class, new $T<$T>($T.class))", LoganSquareWrapper.class,
-                    types.erasure(type.asType()), TypeConverterMapper.class, type, impl);
+                    types.erasure(type.asType()), MapperTypeConverter.class, type, impl);
         }
         for (TypeElement type : initializerInfo.getEnums()) {
             builder.addStatement("$T.registerTypeConverter($T.class, new $T<>($T.class))", LoganSquareWrapper.class,

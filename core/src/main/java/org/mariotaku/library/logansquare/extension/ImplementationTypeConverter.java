@@ -29,11 +29,11 @@ import java.io.IOException;
 /**
  * Created by mariotaku on 15/5/5.
  */
-public class TypeConverterMapper<T> implements TypeConverter<T> {
+public class ImplementationTypeConverter<T> implements TypeConverter<T> {
 
     private final Class<? extends T> cls;
 
-    public TypeConverterMapper(Class<? extends T> cls) {
+    public ImplementationTypeConverter(Class<? extends T> cls) {
         this.cls = cls;
     }
 
