@@ -72,7 +72,7 @@ public class ImplementationClassProcessor extends Processor {
         }
         if (implCls != null) {
             initializerInfo.putImplementation(type, implCls);
-            final Mapper mapperAnnotation = implCls.getAnnotation(Mapper.class);
+            final Mapper mapperAnnotation = elements.getTypeElement(implCls.toString()).getAnnotation(Mapper.class);
             String mapperCls = null;
             mProcessingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, type + " has implementation class "
                     + implAnnotation + ", mapper is " + mapperAnnotation);
