@@ -19,6 +19,8 @@
 
 package org.mariotaku.library.logansquare.extension;
 
+import com.squareup.javapoet.TypeName;
+
 import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.TypeMirror;
@@ -33,8 +35,8 @@ import java.util.HashSet;
 public class LoganSquareWrapperInitializerInfo {
     public final String name = getInitializerClassName();
     public boolean fileCreated;
-    private HashMap<TypeElement, String> mappers = new HashMap<>();
-    private HashMap<TypeElement, Element> wrappers = new HashMap<>();
+    private HashMap<TypeElement, TypeName> mappers = new HashMap<>();
+    private HashMap<TypeElement, TypeName> wrappers = new HashMap<>();
     private HashMap<TypeElement, TypeMirror> implementations = new HashMap<>();
     private HashSet<TypeElement> enums = new HashSet<>();
 
@@ -51,7 +53,7 @@ public class LoganSquareWrapperInitializerInfo {
         return name;
     }
 
-    public HashMap<TypeElement, Element> getWrappers() {
+    public HashMap<TypeElement, TypeName> getWrappers() {
         return wrappers;
     }
 
@@ -59,11 +61,11 @@ public class LoganSquareWrapperInitializerInfo {
         return implementations;
     }
 
-    public HashMap<TypeElement, String> getMappers() {
+    public HashMap<TypeElement, TypeName> getMappers() {
         return mappers;
     }
 
-    public void putMapper(TypeElement type, String mapper) {
+    public void putMapper(TypeElement type, TypeName mapper) {
         mappers.put(type, mapper);
     }
 
@@ -75,7 +77,7 @@ public class LoganSquareWrapperInitializerInfo {
         enums.add(type);
     }
 
-    public void putWrapper(TypeElement type, Element wrapper) {
+    public void putWrapper(TypeElement type, TypeName wrapper) {
         wrappers.put(type, wrapper);
     }
 }

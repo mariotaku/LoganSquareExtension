@@ -19,6 +19,7 @@
 
 package org.mariotaku.library.logansquare.extension.processor;
 
+import com.squareup.javapoet.TypeName;
 import org.mariotaku.library.logansquare.extension.LoganSquareWrapperInitializerInfo;
 import org.mariotaku.library.logansquare.extension.annotation.Wrapper;
 
@@ -27,6 +28,7 @@ import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.MirroredTypeException;
+import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 import java.lang.annotation.Annotation;
@@ -61,14 +63,14 @@ public class WrapperClassProcessor extends Processor {
             error(element, "%s: %s annotation can't be used on private classes.", type.getQualifiedName(), getAnnotation().getSimpleName());
         }
         final Wrapper annotation = type.getAnnotation(Wrapper.class);
-        Element wrapper = null;
+        TypeMirror wrapper = null;
         try {
             annotation.value();
         } catch (MirroredTypeException e) {
-            wrapper = types.asElement(e.getTypeMirror());
+            wrapper = e.getTypeMirror();
         }
         if (wrapper != null) {
-            initializerInfo.putWrapper(type, wrapper);
+            initializerInfo.putWrapper(type, TypeName.get(wrapper));
         }
     }
 }

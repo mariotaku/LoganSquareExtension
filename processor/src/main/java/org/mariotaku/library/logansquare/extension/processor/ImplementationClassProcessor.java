@@ -20,6 +20,8 @@
 package org.mariotaku.library.logansquare.extension.processor;
 
 import com.bluelinelabs.logansquare.Constants;
+import com.squareup.javapoet.ClassName;
+import com.squareup.javapoet.TypeName;
 import org.mariotaku.library.logansquare.extension.LoganSquareWrapperInitializerInfo;
 import org.mariotaku.library.logansquare.extension.annotation.Implementation;
 import org.mariotaku.library.logansquare.extension.annotation.Mapper;
@@ -76,23 +78,23 @@ public class ImplementationClassProcessor extends Processor {
             final TypeElement implElement = elements.getTypeElement(implCls.toString());
             final Mapper mapperAnnotation = implElement.getAnnotation(Mapper.class);
             final Wrapper wrapperAnnotation = implElement.getAnnotation(Wrapper.class);
-            Element mapperCls = null, wrapperCls = null;
+            TypeName mapperCls = null, wrapperCls = null;
             if (mapperAnnotation != null) {
                 try {
                     mapperAnnotation.value();
                 } catch (MirroredTypeException e) {
-                    mapperCls = types.asElement(e.getTypeMirror());
-                    initializerInfo.putMapper(type, String.valueOf(elements.getBinaryName((TypeElement) mapperCls)));
+                    mapperCls = TypeName.get(e.getTypeMirror());
                 }
             }
             if (mapperCls == null) {
-                initializerInfo.putMapper(type, getMapperClass(elements, types, implCls));
+                mapperCls = getMapperClass(elements, types, implCls);
             }
+            initializerInfo.putMapper(type, mapperCls);
             if (wrapperAnnotation != null) {
                 try {
                     wrapperAnnotation.value();
                 } catch (MirroredTypeException e) {
-                    wrapperCls = types.asElement(e.getTypeMirror());
+                    wrapperCls = TypeName.get(e.getTypeMirror());
                 }
             }
             if (wrapperCls != null) {
@@ -101,8 +103,10 @@ public class ImplementationClassProcessor extends Processor {
         }
     }
 
-    private String getMapperClass(Elements elements, Types types, TypeMirror implCls) {
-        final TypeElement element = (TypeElement) types.asElement(implCls);
-        return elements.getBinaryName(element) + Constants.MAPPER_CLASS_SUFFIX;
+    private TypeName getMapperClass(Elements elements, Types types, TypeMirror implCls) {
+        final Element element = types.asElement(implCls);
+        final String packageName = String.valueOf(elements.getPackageOf(element).getQualifiedName());
+        String implClsSimpleName = String.valueOf(element.getSimpleName()).replace('.', '$');
+        return ClassName.get(packageName, implClsSimpleName + Constants.MAPPER_CLASS_SUFFIX);
     }
 }

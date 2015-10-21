@@ -21,9 +21,9 @@ package org.mariotaku.library.logansquare.extension;
 
 import com.squareup.javapoet.CodeBlock;
 import com.squareup.javapoet.JavaFile;
+import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 
-import javax.lang.model.element.Element;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.TypeMirror;
@@ -62,10 +62,10 @@ public class ObjectMapperInjector {
 
     private CodeBlock getRegisterMappersCode(Elements elements, Types types) {
         final CodeBlock.Builder builder = CodeBlock.builder();
-        for (Map.Entry<TypeElement, String> entry : initializerInfo.getMappers().entrySet()) {
+        for (Map.Entry<TypeElement, TypeName> entry : initializerInfo.getMappers().entrySet()) {
             final TypeElement type = entry.getKey();
-            final String mapper = entry.getValue();
-            builder.addStatement("$T.registerJsonMapperForName($T.class, $L.class)", LoganSquareWrapper.class,
+            final TypeName mapper = entry.getValue();
+            builder.addStatement("$T.registerJsonMapper($T.class, $T.class)", LoganSquareWrapper.class,
                     types.erasure(type.asType()), mapper);
         }
         return builder.build();
@@ -73,9 +73,9 @@ public class ObjectMapperInjector {
 
     private CodeBlock getRegisterWrappersCode(Elements elements, Types types) {
         final CodeBlock.Builder builder = CodeBlock.builder();
-        for (Map.Entry<TypeElement, Element> entry : initializerInfo.getWrappers().entrySet()) {
+        for (Map.Entry<TypeElement, TypeName> entry : initializerInfo.getWrappers().entrySet()) {
             final TypeElement type = entry.getKey();
-            final Element wrapper = entry.getValue();
+            final TypeName wrapper = entry.getValue();
             builder.addStatement("$T.registerWrapper($T.class, $T.class)", LoganSquareWrapper.class,
                     types.erasure(type.asType()), wrapper);
         }
