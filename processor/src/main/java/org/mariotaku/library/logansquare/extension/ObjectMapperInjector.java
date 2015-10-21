@@ -90,6 +90,12 @@ public class ObjectMapperInjector {
             builder.addStatement("$T.registerTypeConverter($T.class, new $T<$T>($T.class))", LoganSquareWrapper.class,
                     types.erasure(type.asType()), TypeConverterMapper.class, type, impl);
         }
+        for (Map.Entry<TypeElement, TypeName> entry : initializerInfo.getMappers().entrySet()) {
+            final TypeElement type = entry.getKey();
+            final TypeName impl = entry.getValue();
+            builder.addStatement("$T.registerTypeConverter($T.class, new $T<$T>($T.class))", LoganSquareWrapper.class,
+                    types.erasure(type.asType()), TypeConverterMapper.class, type, impl);
+        }
         for (TypeElement type : initializerInfo.getEnums()) {
             builder.addStatement("$T.registerTypeConverter($T.class, new $T<>($T.class))", LoganSquareWrapper.class,
                     types.erasure(type.asType()), EnumConverter.class, type);
