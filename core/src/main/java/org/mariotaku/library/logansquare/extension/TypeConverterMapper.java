@@ -33,7 +33,7 @@ public class TypeConverterMapper<T> implements TypeConverter<T> {
 
     private final Class<? extends T> cls;
 
-    TypeConverterMapper(Class<? extends T> cls) {
+    public TypeConverterMapper(Class<? extends T> cls) {
         this.cls = cls;
     }
 

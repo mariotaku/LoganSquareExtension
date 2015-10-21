@@ -71,8 +71,8 @@ public class ObjectMapperInjector {
         for (Map.Entry<TypeElement, TypeMirror> entry : initializerInfo.getImplementations().entrySet()) {
             final TypeElement type = entry.getKey();
             final TypeMirror impl = entry.getValue();
-            builder.addStatement("$T.registerTypeConverter($T.class, new $T<>($T.class))", LoganSquareWrapper.class, type,
-                    TypeConverterMapper.class, impl);
+            builder.addStatement("$T.registerTypeConverter($T.class, new $T<$T>($T.class))", LoganSquareWrapper.class, type,
+                    TypeConverterMapper.class, type, impl);
         }
         for (TypeElement type : initializerInfo.getEnums()) {
             builder.addStatement("$T.registerTypeConverter($T.class, new $T<>($T.class))", LoganSquareWrapper.class, type,
