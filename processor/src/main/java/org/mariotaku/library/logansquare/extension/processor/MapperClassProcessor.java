@@ -68,7 +68,7 @@ public class MapperClassProcessor extends Processor {
             mapper = types.asElement(e.getTypeMirror());
         }
         if (mapper != null) {
-            initializerInfo.putMapper(type, mapper);
+            initializerInfo.putMapper(type, String.valueOf(elements.getBinaryName((TypeElement) mapper)));
         }
     }
 }

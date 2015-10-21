@@ -33,7 +33,6 @@ import javax.lang.model.type.MirroredTypeException;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
-import javax.tools.Diagnostic;
 import java.lang.annotation.Annotation;
 
 import static javax.lang.model.element.Modifier.PRIVATE;
@@ -83,14 +82,12 @@ public class ImplementationClassProcessor extends Processor {
                     mapperAnnotation.value();
                 } catch (MirroredTypeException e) {
                     mapperCls = types.asElement(e.getTypeMirror());
+                    initializerInfo.putMapper(type, String.valueOf(elements.getBinaryName((TypeElement) mapperCls)));
                 }
             }
             if (mapperCls == null) {
-                final String mapperClass = getMapperClass(elements, types, implCls);
-                mapperCls = elements.getTypeElement(mapperClass);
-                mProcessingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, mapperCls.toString());
+                initializerInfo.putMapper(type, getMapperClass(elements, types, implCls));
             }
-            initializerInfo.putMapper(type, mapperCls);
             if (wrapperAnnotation != null) {
                 try {
                     wrapperAnnotation.value();

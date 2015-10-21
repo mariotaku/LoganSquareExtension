@@ -44,7 +44,7 @@ public class ObjectMapperInjector {
 
     public String getJavaClassFile(Elements elements, Types types) {
         try {
-            return JavaFile.builder(LoganSquareWrapper.class.getPackage().getName(), getTypeSpec(elements,types)).build().toString();
+            return JavaFile.builder(LoganSquareWrapper.class.getPackage().getName(), getTypeSpec(elements, types)).build().toString();
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -62,10 +62,10 @@ public class ObjectMapperInjector {
 
     private CodeBlock getRegisterMappersCode(Elements elements, Types types) {
         final CodeBlock.Builder builder = CodeBlock.builder();
-        for (Map.Entry<TypeElement, Element> entry : initializerInfo.getMappers().entrySet()) {
+        for (Map.Entry<TypeElement, String> entry : initializerInfo.getMappers().entrySet()) {
             final TypeElement type = entry.getKey();
-            final Element mapper = entry.getValue();
-            builder.addStatement("$T.registerJsonMapperForName($T.class, $T.class)", LoganSquareWrapper.class,
+            final String mapper = entry.getValue();
+            builder.addStatement("$T.registerJsonMapperForName($T.class, $L.class)", LoganSquareWrapper.class,
                     types.erasure(type.asType()), mapper);
         }
         return builder.build();
