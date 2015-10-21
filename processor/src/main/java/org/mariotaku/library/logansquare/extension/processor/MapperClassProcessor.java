@@ -29,6 +29,7 @@ import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.MirroredTypeException;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
+import javax.tools.Diagnostic;
 
 import static javax.lang.model.element.Modifier.PRIVATE;
 
@@ -60,14 +61,15 @@ public class MapperClassProcessor extends Processor {
             error(element, "%s: %s annotation can't be used on private classes.", type.getQualifiedName(), getAnnotation().getSimpleName());
         }
         final Mapper annotation = type.getAnnotation(Mapper.class);
-        String impl = null;
+        String mapper = null;
         try {
             annotation.value();
         } catch (MirroredTypeException e) {
-            impl = e.getTypeMirror().toString();
+            mapper = e.getTypeMirror().toString();
         }
-        if (impl != null) {
-            initializerInfo.putMapper(type, impl);
+        if (mapper != null) {
+            mProcessingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, type + " has mapper class " + mapper);
+            initializerInfo.putMapper(type, mapper);
         }
     }
 }

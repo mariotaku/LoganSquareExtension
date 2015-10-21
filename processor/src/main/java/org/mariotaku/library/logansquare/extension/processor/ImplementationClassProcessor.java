@@ -32,6 +32,7 @@ import javax.lang.model.type.MirroredTypeException;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
+import javax.tools.Diagnostic;
 
 import static javax.lang.model.element.Modifier.PRIVATE;
 
@@ -73,6 +74,8 @@ public class ImplementationClassProcessor extends Processor {
             initializerInfo.putImplementation(type, implCls);
             final Mapper mapperAnnotation = implCls.getAnnotation(Mapper.class);
             String mapperCls = null;
+            mProcessingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, type + " has implementation class "
+                    + implAnnotation + ", mapper is " + mapperAnnotation);
             if (mapperAnnotation != null) {
                 try {
                     mapperAnnotation.value();
