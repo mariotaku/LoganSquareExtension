@@ -30,9 +30,10 @@ import java.util.HashSet;
 public class LoganSquareWrapperInitializerInfo {
     public final String name = getInitializerClassName();
     public boolean fileCreated;
-    public HashMap<TypeElement, String> mappers = new HashMap<>();
-    public HashMap<TypeElement, TypeMirror> implementations = new HashMap<>();
-    public HashSet<TypeElement> enums = new HashSet<>();
+    private HashMap<TypeElement, String> mappers = new HashMap<>();
+    private HashMap<TypeElement, String> wrappers = new HashMap<>();
+    private HashMap<TypeElement, TypeMirror> implementations = new HashMap<>();
+    private HashSet<TypeElement> enums = new HashSet<>();
 
     private static String getInitializerClassName() {
         final Class<LoganSquareWrapper> cls = LoganSquareWrapper.class;
@@ -45,6 +46,10 @@ public class LoganSquareWrapperInitializerInfo {
 
     public String getName() {
         return name;
+    }
+
+    public HashMap<TypeElement, String> getWrappers() {
+        return wrappers;
     }
 
     public HashMap<TypeElement, TypeMirror> getImplementations() {
@@ -65,5 +70,9 @@ public class LoganSquareWrapperInitializerInfo {
 
     public void putEnum(TypeElement type) {
         enums.add(type);
+    }
+
+    public void putWrapper(TypeElement type, String wrapper) {
+        wrappers.put(type, wrapper);
     }
 }

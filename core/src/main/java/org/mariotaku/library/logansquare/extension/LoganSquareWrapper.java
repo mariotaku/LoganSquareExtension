@@ -19,24 +19,23 @@
 
 package org.mariotaku.library.logansquare.extension;
 
-import com.bluelinelabs.logansquare.Constants;
 import com.bluelinelabs.logansquare.JsonMapper;
 import com.bluelinelabs.logansquare.LoganSquare;
-import com.bluelinelabs.logansquare.NoSuchMapperException;
-import org.mariotaku.library.logansquare.extension.annotation.Implementation;
-import org.mariotaku.library.logansquare.extension.annotation.Mapper;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Field;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 /**
  * Created by mariotaku on 15/10/21.
  */
+@SuppressWarnings("unused")
 public class LoganSquareWrapper extends LoganSquare {
+    private static final Map<Class, Class<? extends ModelWrapper>> OBJECT_WRAPPERS = new HashMap<>();
 
     static {
         try {
@@ -170,42 +169,6 @@ public class LoganSquareWrapper extends LoganSquare {
     }
 
     /**
-     * Returns a JsonMapper for a given class that has been annotated with @JsonObject.
-     *
-     * @param cls The class for which the JsonMapper should be fetched.
-     */
-    @SuppressWarnings("unchecked")
-    public static <E> JsonMapper<E> mapperFor(Class<E> cls) throws NoSuchMapperException {
-        JsonMapper<E> cachedMapper = getObjectMappers().get(cls);
-
-        if (cachedMapper == null) {
-            try {
-                Implementation implAnnotation = cls.getAnnotation(Implementation.class);
-                Class<?> implClass;
-                if (implAnnotation != null) {
-                    implClass = implAnnotation.value();
-                } else {
-                    implClass = cls;
-                }
-                Mapper mapperAnnotation = implClass.getAnnotation(Mapper.class);
-                Class<?> mapperClass;
-                if (mapperAnnotation != null) {
-                    mapperClass = mapperAnnotation.value();
-                } else {
-                    mapperClass = Class.forName(implClass.getName() + Constants.MAPPER_CLASS_SUFFIX);
-                }
-                cachedMapper = (JsonMapper<E>) mapperClass.newInstance();
-                getObjectMappers().put(cls, cachedMapper);
-            } catch (Exception e) {
-                throw new NoSuchMapperException(cls, e);
-            }
-        }
-
-        return cachedMapper;
-    }
-
-
-    /**
      * Register a new JsonMapper for parsing and serialization.
      *
      * @param cls    The class for which the JsonMapper should be used.
@@ -223,6 +186,15 @@ public class LoganSquareWrapper extends LoganSquare {
         }
     }
 
+    public static <E> void registerWrapperForName(Class<E> cls, String mapperCls) {
+        try {
+            //noinspection unchecked
+            OBJECT_WRAPPERS.put(cls, (Class<? extends ModelWrapper>) Class.forName(mapperCls));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     private static Map<Class, JsonMapper> getObjectMappers() {
         try {
             final Field field = LoganSquare.class.getDeclaredField("OBJECT_MAPPERS");
@@ -235,6 +207,6 @@ public class LoganSquareWrapper extends LoganSquare {
     }
 
     public static Class<?> getWrapperClass(Class<?> cls) {
-        return null;
+        return OBJECT_WRAPPERS.get(cls);
     }
 }

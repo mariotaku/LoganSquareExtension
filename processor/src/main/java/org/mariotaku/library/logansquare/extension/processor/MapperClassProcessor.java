@@ -29,7 +29,7 @@ import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.MirroredTypeException;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
-import javax.tools.Diagnostic;
+import java.lang.annotation.Annotation;
 
 import static javax.lang.model.element.Modifier.PRIVATE;
 
@@ -43,13 +43,13 @@ public class MapperClassProcessor extends Processor {
     }
 
     @Override
-    public Class getAnnotation() {
+    public Class<? extends Annotation> getAnnotation() {
         return Mapper.class;
     }
 
     @Override
     public void findAndParseObjects(RoundEnvironment env, LoganSquareWrapperInitializerInfo initializerInfo, Elements elements, Types types) {
-        for (Element element : env.getElementsAnnotatedWith(Mapper.class)) {
+        for (Element element : env.getElementsAnnotatedWith(getAnnotation())) {
             processImplementationAnnotation(element, initializerInfo, elements, types);
         }
     }
@@ -68,7 +68,6 @@ public class MapperClassProcessor extends Processor {
             mapper = e.getTypeMirror().toString();
         }
         if (mapper != null) {
-            mProcessingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, type + " has mapper class " + mapper);
             initializerInfo.putMapper(type, mapper);
         }
     }

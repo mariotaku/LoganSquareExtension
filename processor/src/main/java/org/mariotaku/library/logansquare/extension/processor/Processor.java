@@ -26,6 +26,7 @@ import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.Element;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
+import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,7 +40,7 @@ public abstract class Processor {
         mProcessingEnv = processingEnv;
     }
 
-    public abstract Class getAnnotation();
+    public abstract Class<? extends Annotation> getAnnotation();
 
     public abstract void findAndParseObjects(RoundEnvironment env, LoganSquareWrapperInitializerInfo initializerInfo, Elements elements, Types types);
 
@@ -48,6 +49,7 @@ public abstract class Processor {
         list.add(new ImplementationClassProcessor(processingEnvironment));
         list.add(new MapperClassProcessor(processingEnvironment));
         list.add(new EnumClassProcessor(processingEnvironment));
+        list.add(new WrapperClassProcessor(processingEnvironment));
         return list;
     }
 

@@ -53,6 +53,7 @@ public class ObjectMapperInjector {
         builder.addModifiers(Modifier.PUBLIC);
         builder.addStaticBlock(getRegisterMappersCode());
         builder.addStaticBlock(getRegisterConverterCode());
+        builder.addStaticBlock(getRegisterWrappersCode());
         return builder.build();
     }
 
@@ -62,6 +63,16 @@ public class ObjectMapperInjector {
             final TypeElement type = entry.getKey();
             final String mapperName = entry.getValue();
             builder.addStatement("$T.registerJsonMapperForName($T.class, \"$L\")", LoganSquareWrapper.class, type, mapperName);
+        }
+        return builder.build();
+    }
+
+    private CodeBlock getRegisterWrappersCode() {
+        final CodeBlock.Builder builder = CodeBlock.builder();
+        for (Map.Entry<TypeElement, String> entry : initializerInfo.getWrappers().entrySet()) {
+            final TypeElement type = entry.getKey();
+            final String wrapperName = entry.getValue();
+            builder.addStatement("$T.registerWrapperForName($T.class, \"$L\")", LoganSquareWrapper.class, type, wrapperName);
         }
         return builder.build();
     }

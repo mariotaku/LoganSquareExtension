@@ -28,6 +28,7 @@ import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
+import java.lang.annotation.Annotation;
 
 import static javax.lang.model.element.Modifier.PRIVATE;
 
@@ -41,13 +42,13 @@ public class EnumClassProcessor extends Processor {
     }
 
     @Override
-    public Class getAnnotation() {
+    public Class<? extends Annotation> getAnnotation() {
         return EnumClass.class;
     }
 
     @Override
     public void findAndParseObjects(RoundEnvironment env, LoganSquareWrapperInitializerInfo initializerInfo, Elements elements, Types types) {
-        for (Element element : env.getElementsAnnotatedWith(EnumClass.class)) {
+        for (Element element : env.getElementsAnnotatedWith(getAnnotation())) {
             processImplementationAnnotation(element, initializerInfo, elements, types);
         }
     }
