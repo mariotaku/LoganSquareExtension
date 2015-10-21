@@ -58,10 +58,10 @@ public class ObjectMapperInjector {
 
     private CodeBlock getRegisterMappersCode() {
         final CodeBlock.Builder builder = CodeBlock.builder();
-        for (Map.Entry<TypeElement, TypeMirror> entry : initializerInfo.getMappers().entrySet()) {
+        for (Map.Entry<TypeElement, String> entry : initializerInfo.getMappers().entrySet()) {
             final TypeElement type = entry.getKey();
-            final TypeMirror mapper = entry.getValue();
-            builder.addStatement("$T.registerJsonMapper($T.class, $T.class)", LoganSquareWrapper.class, type, mapper);
+            final String mapperName = entry.getValue();
+            builder.addStatement("$T.registerJsonMapperForName($T.class, \"$L\")", LoganSquareWrapper.class, type, mapperName);
         }
         return builder.build();
     }

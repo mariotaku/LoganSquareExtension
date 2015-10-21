@@ -215,6 +215,14 @@ public class LoganSquareWrapper extends LoganSquare {
         getObjectMappers().put(cls, mapper);
     }
 
+    public static <E> void registerJsonMapperForName(Class<E> cls, String mapperCls) {
+        try {
+            getObjectMappers().put(cls, (JsonMapper) Class.forName(mapperCls).newInstance());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     private static Map<Class, JsonMapper> getObjectMappers() {
         try {
             final Field field = LoganSquare.class.getDeclaredField("OBJECT_MAPPERS");

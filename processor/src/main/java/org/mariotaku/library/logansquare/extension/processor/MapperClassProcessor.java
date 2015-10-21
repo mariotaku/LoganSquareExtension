@@ -20,7 +20,6 @@
 package org.mariotaku.library.logansquare.extension.processor;
 
 import org.mariotaku.library.logansquare.extension.LoganSquareWrapperInitializerInfo;
-import org.mariotaku.library.logansquare.extension.annotation.Implementation;
 import org.mariotaku.library.logansquare.extension.annotation.Mapper;
 
 import javax.annotation.processing.ProcessingEnvironment;
@@ -28,7 +27,6 @@ import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.MirroredTypeException;
-import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 
@@ -62,11 +60,11 @@ public class MapperClassProcessor extends Processor {
             error(element, "%s: %s annotation can't be used on private classes.", type.getQualifiedName(), getAnnotation().getSimpleName());
         }
         final Mapper annotation = type.getAnnotation(Mapper.class);
-        TypeMirror impl = null;
+        String impl = null;
         try {
             annotation.value();
         } catch (MirroredTypeException e) {
-            impl = e.getTypeMirror();
+            impl = e.getTypeMirror().toString();
         }
         if (impl != null) {
             initializerInfo.putMapper(type, impl);

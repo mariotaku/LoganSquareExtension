@@ -32,7 +32,6 @@ import javax.lang.model.type.MirroredTypeException;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
-import javax.tools.Diagnostic;
 
 import static javax.lang.model.element.Modifier.PRIVATE;
 
@@ -73,26 +72,18 @@ public class ImplementationClassProcessor extends Processor {
         if (implCls != null) {
             initializerInfo.putImplementation(type, implCls);
             final Mapper mapperAnnotation = implCls.getAnnotation(Mapper.class);
-            TypeMirror mapperCls = null;
+            String mapperCls = null;
             if (mapperAnnotation != null) {
                 try {
                     mapperAnnotation.value();
                 } catch (MirroredTypeException e) {
-                    mapperCls = e.getTypeMirror();
+                    mapperCls = e.getTypeMirror().toString();
                 }
             }
             if (mapperCls == null) {
-                try {
-                    final String defMapperName = implCls.toString() + Constants.MAPPER_CLASS_SUFFIX;
-                    mProcessingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, "Trying default mapper " + defMapperName);
-                    mapperCls = mProcessingEnv.getElementUtils().getTypeElement(defMapperName).asType();
-                } catch (MirroredTypeException e) {
-                    mapperCls = e.getTypeMirror();
-                }
+                mapperCls = implCls.toString() + Constants.MAPPER_CLASS_SUFFIX;
             }
-            if (mapperCls != null) {
-                initializerInfo.putMapper(type, mapperCls);
-            }
+            initializerInfo.putMapper(type, mapperCls);
         }
     }
 }

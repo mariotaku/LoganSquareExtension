@@ -30,7 +30,7 @@ import java.util.HashSet;
 public class LoganSquareWrapperInitializerInfo {
     public final String name = getInitializerClassName();
     public boolean fileCreated;
-    public HashMap<TypeElement, TypeMirror> mappers = new HashMap<>();
+    public HashMap<TypeElement, String> mappers = new HashMap<>();
     public HashMap<TypeElement, TypeMirror> implementations = new HashMap<>();
     public HashSet<TypeElement> enums = new HashSet<>();
 
@@ -51,11 +51,11 @@ public class LoganSquareWrapperInitializerInfo {
         return implementations;
     }
 
-    public HashMap<TypeElement, TypeMirror> getMappers() {
+    public HashMap<TypeElement, String> getMappers() {
         return mappers;
     }
 
-    public void putMapper(TypeElement type, TypeMirror mapper) {
+    public void putMapper(TypeElement type, String mapper) {
         mappers.put(type, mapper);
     }
 
