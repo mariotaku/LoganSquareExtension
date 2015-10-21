@@ -60,7 +60,7 @@ public class ObjectMapperInjector {
         for (Map.Entry<TypeElement, TypeMirror> entry : initializerInfo.getMappers().entrySet()) {
             final TypeElement type = entry.getKey();
             final TypeMirror impl = entry.getValue();
-            builder.addStatement("$T.registerJsonMapper(%T.class, %T.class)", LoganSquareWrapper.class, type, impl);
+            builder.addStatement("$T.registerJsonMapper($T.class, $T.class)", LoganSquareWrapper.class, type, impl);
         }
         return builder.build();
     }
