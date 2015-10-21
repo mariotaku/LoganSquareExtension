@@ -1,8 +1,4 @@
-group 'org.mariotaku.logansquare.extension'
-
 apply plugin: 'java'
-
-ext.artifactId = 'logansquare-extension-core'
 
 repositories {
     mavenCentral()

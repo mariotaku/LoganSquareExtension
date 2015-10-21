@@ -1,12 +1,23 @@
-apply plugin: 'maven'
+allprojects {
+    version = '0.9'
+}
 
 subprojects {
     apply plugin: 'java'
     apply plugin: 'maven'
 
-    version = '0.9'
-}
+    task sourcesJar(type: Jar, dependsOn: classes) {
+        classifier = 'sources'
+        from sourceSets.main.allSource
+    }
 
-repositories {
-    mavenCentral()
+    task javadocJar(type: Jar, dependsOn: javadoc) {
+        classifier = 'javadoc'
+        from javadoc.destinationDir
+    }
+
+    artifacts {
+        archives sourcesJar
+        archives javadocJar
+    }
 }
