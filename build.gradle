@@ -1,5 +1,5 @@
 allprojects {
-    version = '0.9'
+    version = '0.9.2'
 }
 
 subprojects {
@@ -16,7 +16,6 @@ subprojects {
 
     task javadocJar(type: Jar, dependsOn: javadoc) {
         classifier = 'javadoc'
-        from javadoc.destinationDir
     }
 
     artifacts {
