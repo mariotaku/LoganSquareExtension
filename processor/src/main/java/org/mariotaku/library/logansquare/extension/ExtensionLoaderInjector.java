@@ -264,7 +264,7 @@ public class ExtensionLoaderInjector {
                 } else {
                     builder.nextControlFlow("else if (cls == $T.class)", entry.getValue());
                 }
-                builder.addStatement("mapper = (Mapper<T>) $T.INSTANCE", entry.getValue());
+                builder.addStatement("mapper = ($T<T>) $T.INSTANCE", JsonMapper.class, entry.getValue());
             }
         }
 
