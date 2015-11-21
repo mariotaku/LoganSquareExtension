@@ -62,7 +62,7 @@ public class ExtensionLoaderInjector {
 
     public String getJavaClassFile(Elements elements, Types types) {
         try {
-            return JavaFile.builder(LoganSquareWrapper.class.getPackage().getName(), getTypeSpec(elements, types)).build().toString();
+            return JavaFile.builder(initializerInfo.name.packageName(), getTypeSpec(elements, types)).build().toString();
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -70,7 +70,7 @@ public class ExtensionLoaderInjector {
     }
 
     private TypeSpec getTypeSpec(Elements elements, Types types) {
-        TypeSpec.Builder builder = TypeSpec.classBuilder(initializerInfo.name);
+        TypeSpec.Builder builder = TypeSpec.classBuilder(initializerInfo.name.simpleName());
         builder.addModifiers(Modifier.PUBLIC);
         builder.addSuperinterface(ClassName.get(JsonMapperLoader.class));
 

@@ -84,13 +84,13 @@ public class AnnotationProcessor extends AbstractProcessor {
             if (!initializerInfo.fileCreated) {
                 initializerInfo.fileCreated = true;
                 try {
-                    JavaFileObject jfo = mFiler.createSourceFile(initializerInfo.name);
+                    JavaFileObject jfo = mFiler.createSourceFile(initializerInfo.name.toString());
                     Writer writer = jfo.openWriter();
                     writer.write(new ExtensionLoaderInjector(initializerInfo).getJavaClassFile(mElementUtils, mTypeUtils));
                     writer.flush();
                     writer.close();
                 } catch (IOException e) {
-                    error(mInitializerInfo.name, "Exception occurred while attempting to write injector for type %s. Exception message: %s", mInitializerInfo.name, e.getMessage());
+                    error(mInitializerInfo.toString(), "Exception occurred while attempting to write injector for type %s. Exception message: %s", mInitializerInfo.name, e.getMessage());
                 }
             }
 

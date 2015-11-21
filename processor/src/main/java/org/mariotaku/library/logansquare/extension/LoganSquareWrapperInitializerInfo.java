@@ -19,6 +19,7 @@
 
 package org.mariotaku.library.logansquare.extension;
 
+import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.TypeName;
 
 import javax.lang.model.element.TypeElement;
@@ -30,7 +31,7 @@ import java.util.HashSet;
  * Created by mariotaku on 15/10/21.
  */
 public class LoganSquareWrapperInitializerInfo {
-    public final String name;
+    public final ClassName name;
     public boolean fileCreated;
     private HashMap<TypeElement, TypeName> mappers = new HashMap<>();
     private HashMap<TypeElement, TypeName> wrappers = new HashMap<>();
@@ -39,11 +40,12 @@ public class LoganSquareWrapperInitializerInfo {
 
     LoganSquareWrapperInitializerInfo(String suffix) {
         final Class<LoganSquareWrapper> cls = LoganSquareWrapper.class;
-        final String baseName = cls.getPackage().getName() + "." + cls.getSimpleName() + "Initializer";
+        final String packageName = cls.getPackage().getName();
+        final String baseName = cls.getSimpleName() + "Initializer";
         if (suffix != null) {
-            name = baseName + suffix;
+            this.name = ClassName.get(packageName, baseName + suffix);
         } else {
-            name = baseName;
+            this.name = ClassName.get(packageName, baseName);
         }
     }
 
@@ -51,7 +53,7 @@ public class LoganSquareWrapperInitializerInfo {
         return enums;
     }
 
-    public String getName() {
+    public ClassName getName() {
         return name;
     }
 
