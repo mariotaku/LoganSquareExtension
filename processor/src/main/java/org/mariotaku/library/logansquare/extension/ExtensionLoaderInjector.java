@@ -275,7 +275,7 @@ public class ExtensionLoaderInjector {
                 .addTypeVariable(TypeVariableName.get("T"))
                 .returns(ParameterizedTypeName.get(ClassName.get(JsonMapper.class), TypeVariableName.get("T")))
                 .addParameter(ParameterizedTypeName.get(ClassName.get(Class.class), TypeVariableName.get("T")), "cls")
-                .addStatement("$T mapper = $T.getMapper(cls)", JsonMapper.class, LoganSquare.class)
+                .addStatement("$T<T> mapper = $T.getMapper(cls)", JsonMapper.class, LoganSquare.class)
                 .beginControlFlow("if (mapper == null)");
 
         boolean ifStatementStarted = false;
