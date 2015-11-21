@@ -12,30 +12,19 @@ import java.io.IOException;
  */
 public class MapperTypeConverter<T> implements TypeConverter<T> {
 
-    private final Class<? extends JsonMapper<? extends T>> mapperCls;
+    private final JsonMapper<T> mapper;
 
-    public MapperTypeConverter(Class<? extends JsonMapper<? extends T>> mapperCls) {
-        this.mapperCls = mapperCls;
+    public MapperTypeConverter(JsonMapper<T> mapper) {
+        this.mapper = mapper;
     }
 
     @Override
     public T parse(JsonParser jsonParser) throws IOException {
-        final JsonMapper<? extends T> mapper = getJsonMapper();
         return mapper.parse(jsonParser);
-    }
-
-    private JsonMapper<? extends T> getJsonMapper() {
-        try {
-            return mapperCls.newInstance();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
     }
 
     @Override
     public void serialize(T object, String fieldName, boolean writeFieldNameForObject, JsonGenerator jsonGenerator) throws IOException {
-        //noinspection unchecked
-        final JsonMapper<T> mapper = (JsonMapper<T>) getJsonMapper();
         if (writeFieldNameForObject) {
             jsonGenerator.writeFieldName(fieldName);
         }
