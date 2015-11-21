@@ -19,6 +19,7 @@
 
 package org.mariotaku.library.logansquare.extension;
 
+import com.bluelinelabs.logansquare.LoganSquare;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.TypeName;
 
@@ -39,9 +40,8 @@ public class LoganSquareWrapperInitializerInfo {
     private HashSet<TypeElement> enums = new HashSet<>();
 
     LoganSquareWrapperInitializerInfo(String suffix) {
-        final Class<LoganSquareWrapper> cls = LoganSquareWrapper.class;
-        final String packageName = cls.getPackage().getName();
-        final String baseName = cls.getSimpleName() + "Initializer";
+        final String packageName = LoganSquare.class.getPackage().getName();
+        final String baseName = "JsonMapperLoaderExtensionImpl";
         if (suffix != null) {
             this.name = ClassName.get(packageName, baseName + suffix);
         } else {
