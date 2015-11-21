@@ -11,7 +11,7 @@ import java.lang.reflect.Method;
 public class EnumConverter<T extends Enum<T>> implements TypeConverter<T> {
     private final Class<T> cls;
 
-    EnumConverter(Class<T> cls) {
+    public EnumConverter(Class<T> cls) {
         this.cls = cls;
     }
 
