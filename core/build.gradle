@@ -5,5 +5,5 @@ repositories {
 }
 
 dependencies {
-    compile 'com.bluelinelabs:logansquare:1.2.6'
+    compile 'com.bluelinelabs:logansquare:1.3.1'
 }
