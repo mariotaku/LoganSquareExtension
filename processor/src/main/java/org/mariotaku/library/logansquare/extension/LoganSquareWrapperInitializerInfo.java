@@ -30,16 +30,21 @@ import java.util.HashSet;
  * Created by mariotaku on 15/10/21.
  */
 public class LoganSquareWrapperInitializerInfo {
-    public final String name = getInitializerClassName();
+    public final String name;
     public boolean fileCreated;
     private HashMap<TypeElement, TypeName> mappers = new HashMap<>();
     private HashMap<TypeElement, TypeName> wrappers = new HashMap<>();
     private HashMap<TypeElement, TypeMirror> implementations = new HashMap<>();
     private HashSet<TypeElement> enums = new HashSet<>();
 
-    private static String getInitializerClassName() {
+    LoganSquareWrapperInitializerInfo(String suffix) {
         final Class<LoganSquareWrapper> cls = LoganSquareWrapper.class;
-        return cls.getPackage().getName() + "." + cls.getSimpleName() + "Initializer";
+        final String baseName = cls.getPackage().getName() + "." + cls.getSimpleName() + "Initializer";
+        if (suffix != null) {
+            name = baseName + suffix;
+        } else {
+            name = baseName;
+        }
     }
 
     public HashSet<TypeElement> getEnums() {

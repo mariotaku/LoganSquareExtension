@@ -19,13 +19,11 @@
 
 package org.mariotaku.library.logansquare.extension;
 
-import com.bluelinelabs.logansquare.JsonMapper;
 import com.bluelinelabs.logansquare.LoganSquare;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -168,40 +166,11 @@ public class LoganSquareWrapper extends LoganSquare {
         mapperFor(jsonObjectClass).serialize(map, os);
     }
 
-    /**
-     * Register a new JsonMapper for parsing and serialization.
-     *
-     * @param cls    The class for which the JsonMapper should be used.
-     * @param mapper The JsonMapper
-     */
-    public static <E> void registerJsonMapper(Class<E> cls, JsonMapper<? extends E> mapper) {
-        getObjectMappers().put(cls, mapper);
-    }
-
-    public static <E> void registerJsonMapper(Class<E> cls, Class<? extends JsonMapper<? extends E>> mapperCls) {
-        try {
-            getObjectMappers().put(cls, (JsonMapper) mapperCls.newInstance());
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     public static <E> void registerWrapper(Class<E> cls, Class<? extends ModelWrapper> wrapperCls) {
         try {
             OBJECT_WRAPPERS.put(cls, wrapperCls);
         } catch (Exception e) {
             throw new RuntimeException(e);
-        }
-    }
-
-    private static Map<Class, JsonMapper> getObjectMappers() {
-        try {
-            final Field field = LoganSquare.class.getDeclaredField("OBJECT_MAPPERS");
-            field.setAccessible(true);
-            //noinspection unchecked
-            return (Map<Class, JsonMapper>) field.get(null);
-        } catch (Exception e) {
-            throw new AssertionError(e);
         }
     }
 

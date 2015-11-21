@@ -22,10 +22,7 @@ package org.mariotaku.library.logansquare.extension;
 
 import org.mariotaku.library.logansquare.extension.processor.Processor;
 
-import javax.annotation.processing.AbstractProcessor;
-import javax.annotation.processing.Filer;
-import javax.annotation.processing.ProcessingEnvironment;
-import javax.annotation.processing.RoundEnvironment;
+import javax.annotation.processing.*;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.util.Elements;
@@ -42,6 +39,7 @@ import java.util.Set;
 import static javax.tools.Diagnostic.Kind.ERROR;
 
 
+@SupportedOptions("jsonExtLoaderSuffix")
 public class AnnotationProcessor extends AbstractProcessor {
     private Elements mElementUtils;
     private Types mTypeUtils;
@@ -57,7 +55,7 @@ public class AnnotationProcessor extends AbstractProcessor {
         mTypeUtils = env.getTypeUtils();
         mFiler = env.getFiler();
         mProcessors = Processor.allProcessors(processingEnv);
-        mInitializerInfo = new LoganSquareWrapperInitializerInfo();
+        mInitializerInfo = new LoganSquareWrapperInitializerInfo(processingEnv.getOptions().get("jsonExtLoaderSuffix"));
     }
 
     @Override
@@ -88,7 +86,7 @@ public class AnnotationProcessor extends AbstractProcessor {
                 try {
                     JavaFileObject jfo = mFiler.createSourceFile(initializerInfo.name);
                     Writer writer = jfo.openWriter();
-                    writer.write(new ObjectMapperInjector(initializerInfo).getJavaClassFile(mElementUtils, mTypeUtils));
+                    writer.write(new ExtensionLoaderInjector(initializerInfo).getJavaClassFile(mElementUtils, mTypeUtils));
                     writer.flush();
                     writer.close();
                 } catch (IOException e) {
