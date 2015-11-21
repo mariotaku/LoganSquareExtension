@@ -33,15 +33,7 @@ import java.util.Map;
  */
 @SuppressWarnings("unused")
 public class LoganSquareWrapper extends LoganSquare {
-    private static final Map<Class, Class<? extends ModelWrapper>> OBJECT_WRAPPERS = new HashMap<>();
-
-    static {
-        try {
-            Class.forName(LoganSquareWrapper.class.getName() + "Initializer");
-        } catch (ClassNotFoundException ignore) {
-
-        }
-    }
+    private static Map<Class, Class<? extends ModelWrapper>> OBJECT_WRAPPERS;
 
     /**
      * Parse an object from an InputStream.
@@ -168,6 +160,9 @@ public class LoganSquareWrapper extends LoganSquare {
 
     public static <E> void registerWrapper(Class<E> cls, Class<? extends ModelWrapper> wrapperCls) {
         try {
+            if (OBJECT_WRAPPERS == null) {
+                OBJECT_WRAPPERS = new HashMap<>();
+            }
             OBJECT_WRAPPERS.put(cls, wrapperCls);
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -175,6 +170,7 @@ public class LoganSquareWrapper extends LoganSquare {
     }
 
     public static Class<?> getWrapperClass(Class<?> cls) {
+        if (OBJECT_WRAPPERS == null) return null;
         return OBJECT_WRAPPERS.get(cls);
     }
 }
