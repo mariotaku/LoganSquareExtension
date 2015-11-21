@@ -55,6 +55,7 @@ public class InitializerInjector {
         builder.addSuperinterface(ClassName.get(LoganSquareWrapperInitializer.class));
 
         final MethodSpec.Builder methodBuilder = MethodSpec.methodBuilder("init");
+        methodBuilder.addModifiers(Modifier.PUBLIC);
 
         for (Map.Entry<TypeElement, TypeName> entry : initializerInfo.getWrappers().entrySet()) {
             final TypeElement type = entry.getKey();
