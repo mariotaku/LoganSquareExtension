@@ -122,7 +122,7 @@ public class ExtensionLoaderInjector {
                     erasure, WrapperTypeConverter.class, erasure, impl);
         }
         for (TypeElement type : initializerInfo.getEnums()) {
-            builder.addStatement("$T.registerTypeConverter($T.class, new $T<>($T.class))", LoganSquareWrapper.class,
+            builder.addStatement("$T.registerTypeConverter($T.class, $T.get($T.class))", LoganSquareWrapper.class,
                     types.erasure(type.asType()), EnumConverter.class, type);
         }
 
