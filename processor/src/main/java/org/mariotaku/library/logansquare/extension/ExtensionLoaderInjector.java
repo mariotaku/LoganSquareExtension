@@ -74,6 +74,7 @@ public class ExtensionLoaderInjector {
         builder.addModifiers(Modifier.PUBLIC);
         builder.addSuperinterface(ClassName.get(JsonMapperLoader.class));
 
+        addAllBuiltInMappers(builder);
 //        builder.addStaticBlock(getRegisterMappersCode(elements, types));
 //        builder.addStaticBlock(getRegisterConverterCode(elements, types));
 //        builder.addStaticBlock(getRegisterWrappersCode(elements, types));
@@ -153,8 +154,26 @@ public class ExtensionLoaderInjector {
         return builder.build();
     }
 
-    public static String getMapperVariableName(String fullyQualifiedClassName) {
-        return fullyQualifiedClassName.replaceAll("\\.", "_").replaceAll("\\$", "_").toUpperCase();
+
+
+    private void addAllBuiltInMappers(TypeSpec.Builder typeSpecBuilder) {
+        addBuiltInMapper(typeSpecBuilder, StringMapper.class);
+        addBuiltInMapper(typeSpecBuilder, IntegerMapper.class);
+        addBuiltInMapper(typeSpecBuilder, LongMapper.class);
+        addBuiltInMapper(typeSpecBuilder, FloatMapper.class);
+        addBuiltInMapper(typeSpecBuilder, DoubleMapper.class);
+        addBuiltInMapper(typeSpecBuilder, BooleanMapper.class);
+        addBuiltInMapper(typeSpecBuilder, ObjectMapper.class);
+        addBuiltInMapper(typeSpecBuilder, ListMapper.class);
+        addBuiltInMapper(typeSpecBuilder, MapMapper.class);
+    }
+
+    private void addBuiltInMapper(TypeSpec.Builder typeSpecBuilder, Class mapperClass) {
+        typeSpecBuilder.addField(FieldSpec.builder(mapperClass, JsonMapperLoaderInjector.getMapperVariableName(mapperClass))
+                .addModifiers(Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL)
+                .initializer("new $T()", mapperClass)
+                .build()
+        );
     }
 
 }
