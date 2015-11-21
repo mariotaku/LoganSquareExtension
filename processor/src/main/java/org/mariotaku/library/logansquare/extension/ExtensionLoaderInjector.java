@@ -29,7 +29,6 @@ import com.squareup.javapoet.*;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.TypeParameterElement;
-import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 import java.util.List;
@@ -52,7 +51,7 @@ public class ExtensionLoaderInjector {
 
     public String getJavaClassFile(Elements elements, Types types) {
         try {
-            return JavaFile.builder(initializerInfo.name.packageName(), getTypeSpec(elements, types)).build().toString();
+            return JavaFile.builder(initializerInfo.getExtensionName().packageName(), getTypeSpec(elements, types)).build().toString();
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -60,7 +59,7 @@ public class ExtensionLoaderInjector {
     }
 
     private TypeSpec getTypeSpec(Elements elements, Types types) {
-        TypeSpec.Builder builder = TypeSpec.classBuilder(initializerInfo.name.simpleName());
+        TypeSpec.Builder builder = TypeSpec.classBuilder(initializerInfo.getExtensionName().simpleName());
         builder.addModifiers(Modifier.PUBLIC);
         builder.addSuperinterface(ClassName.get(JsonMapperLoader.class));
 
@@ -89,41 +88,6 @@ public class ExtensionLoaderInjector {
             final TypeElement type = entry.getKey();
             final TypeName mapper = entry.getValue();
             builder.addStatement("map.put($T.class, $T.INSTANCE)", types.erasure(type.asType()), mapper);
-        }
-
-        for (Map.Entry<TypeElement, TypeName> entry : initializerInfo.getWrappers().entrySet()) {
-            final TypeElement type = entry.getKey();
-            final TypeName wrapper = entry.getValue();
-            builder.addStatement("$T.registerWrapper($T.class, $T.class)", LoganSquareWrapper.class,
-                    types.erasure(type.asType()), wrapper);
-        }
-
-
-        for (Map.Entry<TypeElement, TypeMirror> entry : initializerInfo.getImplementations().entrySet()) {
-            final TypeElement type = entry.getKey();
-            final TypeMirror impl = entry.getValue();
-            final TypeMirror erasure = types.erasure(type.asType());
-            builder.addStatement("$T.registerTypeConverter($T.class, new $T<$T>($T.class))", LoganSquareWrapper.class,
-                    erasure, ImplementationTypeConverter.class, erasure, impl);
-        }
-
-        for (Map.Entry<TypeElement, TypeName> entry : initializerInfo.getMappers().entrySet()) {
-            final TypeElement type = entry.getKey();
-            final TypeName mapper = entry.getValue();
-            final TypeMirror erasure = types.erasure(type.asType());
-            builder.addStatement("$T.registerTypeConverter($T.class, new $T<$T>($T.INSTANCE))", LoganSquareWrapper.class,
-                    erasure, MapperTypeConverter.class, erasure, mapper);
-        }
-        for (Map.Entry<TypeElement, TypeName> entry : initializerInfo.getWrappers().entrySet()) {
-            final TypeElement type = entry.getKey();
-            final TypeName impl = entry.getValue();
-            final TypeMirror erasure = types.erasure(type.asType());
-            builder.addStatement("$T.registerTypeConverter($T.class, new $T<$T>($T.class))", LoganSquareWrapper.class,
-                    erasure, WrapperTypeConverter.class, erasure, impl);
-        }
-        for (TypeElement type : initializerInfo.getEnums()) {
-            builder.addStatement("$T.registerTypeConverter($T.class, $T.get($T.class))", LoganSquareWrapper.class,
-                    types.erasure(type.asType()), EnumConverter.class, type);
         }
 
         return builder.build();

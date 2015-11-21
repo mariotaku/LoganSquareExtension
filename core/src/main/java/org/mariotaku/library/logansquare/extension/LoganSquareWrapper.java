@@ -20,20 +20,35 @@
 package org.mariotaku.library.logansquare.extension;
 
 import com.bluelinelabs.logansquare.LoganSquare;
+import com.bluelinelabs.logansquare.internal.JsonMapperLoader;
+import com.bluelinelabs.logansquare.util.SimpleArrayMap;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.ServiceLoader;
 
 /**
  * Created by mariotaku on 15/10/21.
  */
 @SuppressWarnings("unused")
 public class LoganSquareWrapper extends LoganSquare {
-    private static Map<Class, Class<? extends ModelWrapper>> OBJECT_WRAPPERS;
+    private static final SimpleArrayMap<Class, Class<? extends ModelWrapper>> OBJECT_WRAPPERS = new SimpleArrayMap<>();
+
+    static {
+        for (LoganSquareWrapperInitializer initializer : ServiceLoader.load(LoganSquareWrapperInitializer.class)) {
+            initializer.init();
+        }
+        try {
+            LoganSquareWrapperInitializer loader = (LoganSquareWrapperInitializer)
+                    Class.forName(LoganSquareWrapperInitializer.class.getName() + "Impl").newInstance();
+            loader.init();
+        } catch (Exception e) {
+            // If no JsonMapperLoader service found, and default Loader is not found, throw exception
+        }
+    }
 
     /**
      * Parse an object from an InputStream.
@@ -160,9 +175,6 @@ public class LoganSquareWrapper extends LoganSquare {
 
     public static <E> void registerWrapper(Class<E> cls, Class<? extends ModelWrapper> wrapperCls) {
         try {
-            if (OBJECT_WRAPPERS == null) {
-                OBJECT_WRAPPERS = new HashMap<>();
-            }
             OBJECT_WRAPPERS.put(cls, wrapperCls);
         } catch (Exception e) {
             throw new RuntimeException(e);

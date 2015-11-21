@@ -81,16 +81,31 @@ public class AnnotationProcessor extends AbstractProcessor {
 
             LoganSquareWrapperInitializerInfo initializerInfo = mInitializerInfo;
 
-            if (!initializerInfo.fileCreated) {
-                initializerInfo.fileCreated = true;
+            if (!initializerInfo.extensionFileCreated) {
+                initializerInfo.extensionFileCreated = true;
                 try {
-                    JavaFileObject jfo = mFiler.createSourceFile(initializerInfo.name.toString());
+                    JavaFileObject jfo = mFiler.createSourceFile(initializerInfo.getExtensionName().toString());
                     Writer writer = jfo.openWriter();
                     writer.write(new ExtensionLoaderInjector(initializerInfo).getJavaClassFile(mElementUtils, mTypeUtils));
                     writer.flush();
                     writer.close();
                 } catch (IOException e) {
-                    error(mInitializerInfo.toString(), "Exception occurred while attempting to write injector for type %s. Exception message: %s", mInitializerInfo.name, e.getMessage());
+                    error(mInitializerInfo.toString(), "Exception occurred while attempting to write injector for type %s. Exception message: %s",
+                            mInitializerInfo.getExtensionName(), e.getMessage());
+                }
+            }
+
+            if (!initializerInfo.initializerFileCreated) {
+                initializerInfo.initializerFileCreated = true;
+                try {
+                    JavaFileObject jfo = mFiler.createSourceFile(initializerInfo.getInitializerName().toString());
+                    Writer writer = jfo.openWriter();
+                    writer.write(new InitializerInjector(initializerInfo).getJavaClassFile(mElementUtils, mTypeUtils));
+                    writer.flush();
+                    writer.close();
+                } catch (IOException e) {
+                    error(mInitializerInfo.toString(), "Exception occurred while attempting to write injector for type %s. Exception message: %s",
+                            mInitializerInfo.getInitializerName(), e.getMessage());
                 }
             }
 
