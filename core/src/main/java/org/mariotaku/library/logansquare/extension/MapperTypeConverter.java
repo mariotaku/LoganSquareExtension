@@ -12,9 +12,9 @@ import java.io.IOException;
  */
 public class MapperTypeConverter<T> implements TypeConverter<T> {
 
-    private final JsonMapper<T> mapper;
+    private final JsonMapper<? extends T> mapper;
 
-    public MapperTypeConverter(JsonMapper<T> mapper) {
+    public MapperTypeConverter(JsonMapper<? extends T> mapper) {
         this.mapper = mapper;
     }
 
@@ -28,6 +28,7 @@ public class MapperTypeConverter<T> implements TypeConverter<T> {
         if (writeFieldNameForObject) {
             jsonGenerator.writeFieldName(fieldName);
         }
-        mapper.serialize(object, jsonGenerator, writeFieldNameForObject);
+        //noinspection unchecked
+        ((JsonMapper<T>) mapper).serialize(object, jsonGenerator, writeFieldNameForObject);
     }
 }
