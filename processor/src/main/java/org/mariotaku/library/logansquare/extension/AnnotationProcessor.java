@@ -22,7 +22,10 @@ package org.mariotaku.library.logansquare.extension;
 
 import org.mariotaku.library.logansquare.extension.processor.Processor;
 
-import javax.annotation.processing.*;
+import javax.annotation.processing.AbstractProcessor;
+import javax.annotation.processing.Filer;
+import javax.annotation.processing.ProcessingEnvironment;
+import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.util.Elements;
@@ -39,13 +42,12 @@ import java.util.Set;
 import static javax.tools.Diagnostic.Kind.ERROR;
 
 
-@SupportedOptions("jsonExtLoaderSuffix")
 public class AnnotationProcessor extends AbstractProcessor {
     private Elements mElementUtils;
     private Types mTypeUtils;
     private Filer mFiler;
     private List<Processor> mProcessors;
-    private LoganSquareWrapperInitializerInfo mInitializerInfo;
+    private LoganSquareExtensionInitializerInfo mInitializerInfo;
 
     @Override
     public synchronized void init(ProcessingEnvironment env) {
@@ -55,7 +57,7 @@ public class AnnotationProcessor extends AbstractProcessor {
         mTypeUtils = env.getTypeUtils();
         mFiler = env.getFiler();
         mProcessors = Processor.allProcessors(processingEnv);
-        mInitializerInfo = new LoganSquareWrapperInitializerInfo(processingEnv.getOptions().get("jsonExtLoaderSuffix"));
+        mInitializerInfo = new LoganSquareExtensionInitializerInfo();
     }
 
     @Override
@@ -79,33 +81,18 @@ public class AnnotationProcessor extends AbstractProcessor {
                 processor.findAndParseObjects(env, mInitializerInfo, mElementUtils, mTypeUtils);
             }
 
-            LoganSquareWrapperInitializerInfo initializerInfo = mInitializerInfo;
+            LoganSquareExtensionInitializerInfo initializerInfo = mInitializerInfo;
 
-            if (!initializerInfo.extensionFileCreated) {
-                initializerInfo.extensionFileCreated = true;
+            if (!initializerInfo.fileCreated) {
+                initializerInfo.fileCreated = true;
                 try {
-                    JavaFileObject jfo = mFiler.createSourceFile(initializerInfo.getExtensionName().toString());
+                    JavaFileObject jfo = mFiler.createSourceFile(initializerInfo.name);
                     Writer writer = jfo.openWriter();
-                    writer.write(new ExtensionLoaderInjector(initializerInfo).getJavaClassFile(mElementUtils, mTypeUtils));
+                    writer.write(new ObjectMapperInjector(initializerInfo).getJavaClassFile(mElementUtils, mTypeUtils));
                     writer.flush();
                     writer.close();
                 } catch (IOException e) {
-                    error(mInitializerInfo.toString(), "Exception occurred while attempting to write injector for type %s. Exception message: %s",
-                            mInitializerInfo.getExtensionName(), e.getMessage());
-                }
-            }
-
-            if (!initializerInfo.initializerFileCreated) {
-                initializerInfo.initializerFileCreated = true;
-                try {
-                    JavaFileObject jfo = mFiler.createSourceFile(initializerInfo.getInitializerName().toString());
-                    Writer writer = jfo.openWriter();
-                    writer.write(new InitializerInjector(initializerInfo).getJavaClassFile(mElementUtils, mTypeUtils));
-                    writer.flush();
-                    writer.close();
-                } catch (IOException e) {
-                    error(mInitializerInfo.toString(), "Exception occurred while attempting to write injector for type %s. Exception message: %s",
-                            mInitializerInfo.getInitializerName(), e.getMessage());
+                    error(mInitializerInfo.name, "Exception occurred while attempting to write injector for type %s. Exception message: %s", mInitializerInfo.name, e.getMessage());
                 }
             }
 

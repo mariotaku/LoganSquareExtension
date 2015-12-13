@@ -19,8 +19,6 @@
 
 package org.mariotaku.library.logansquare.extension;
 
-import com.bluelinelabs.logansquare.LoganSquare;
-import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.TypeName;
 
 import javax.lang.model.element.TypeElement;
@@ -31,42 +29,29 @@ import java.util.HashSet;
 /**
  * Created by mariotaku on 15/10/21.
  */
-public class LoganSquareWrapperInitializerInfo {
-    private final ClassName extensionName, initializerName;
-    public boolean extensionFileCreated;
-    public boolean initializerFileCreated;
+public class LoganSquareExtensionInitializerInfo {
+    public final String name = getInitializerClassName();
+    public boolean fileCreated;
     private HashMap<TypeElement, TypeName> mappers = new HashMap<>();
-    private HashMap<TypeElement, TypeName> wrappers = new HashMap<>();
     private HashMap<TypeElement, TypeMirror> implementations = new HashMap<>();
     private HashSet<TypeElement> enums = new HashSet<>();
 
-    LoganSquareWrapperInitializerInfo(String suffix) {
-        final String packageName = LoganSquare.class.getPackage().getName();
-        final String extBaseName = "JsonMapperLoaderExtensionImpl";
-        final String initBaseName = LoganSquareWrapperInitializer.class.getSimpleName() + "Impl";
-        if (suffix != null) {
-            this.extensionName = ClassName.get(packageName, extBaseName + suffix);
-            this.initializerName = ClassName.get(packageName, initBaseName + suffix);
-        } else {
-            this.extensionName = ClassName.get(packageName, extBaseName);
-            this.initializerName = ClassName.get(packageName, initBaseName);
-        }
+    public static String getInitializerClassName() {
+        final Class<LoganSquareExtension> cls = LoganSquareExtension.class;
+        return cls.getPackage().getName() + "." + getInitializerClassDeclarationName();
+    }
+
+    public static String getInitializerClassDeclarationName() {
+        final Class<LoganSquareExtension> cls = LoganSquareExtension.class;
+        return cls.getSimpleName() + "Initializer";
     }
 
     public HashSet<TypeElement> getEnums() {
         return enums;
     }
 
-    public ClassName getInitializerName() {
-        return initializerName;
-    }
-
-    public ClassName getExtensionName() {
-        return extensionName;
-    }
-
-    public HashMap<TypeElement, TypeName> getWrappers() {
-        return wrappers;
+    public String getName() {
+        return name;
     }
 
     public HashMap<TypeElement, TypeMirror> getImplementations() {
@@ -89,7 +74,4 @@ public class LoganSquareWrapperInitializerInfo {
         enums.add(type);
     }
 
-    public void putWrapper(TypeElement type, TypeName wrapper) {
-        wrappers.put(type, wrapper);
-    }
 }

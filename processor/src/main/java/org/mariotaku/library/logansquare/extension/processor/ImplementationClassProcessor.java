@@ -22,10 +22,9 @@ package org.mariotaku.library.logansquare.extension.processor;
 import com.bluelinelabs.logansquare.Constants;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.TypeName;
-import org.mariotaku.library.logansquare.extension.LoganSquareWrapperInitializerInfo;
+import org.mariotaku.library.logansquare.extension.LoganSquareExtensionInitializerInfo;
 import org.mariotaku.library.logansquare.extension.annotation.Implementation;
 import org.mariotaku.library.logansquare.extension.annotation.Mapper;
-import org.mariotaku.library.logansquare.extension.annotation.Wrapper;
 
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
@@ -55,13 +54,13 @@ public class ImplementationClassProcessor extends Processor {
     }
 
     @Override
-    public void findAndParseObjects(RoundEnvironment env, LoganSquareWrapperInitializerInfo initializerInfo, Elements elements, Types types) {
+    public void findAndParseObjects(RoundEnvironment env, LoganSquareExtensionInitializerInfo initializerInfo, Elements elements, Types types) {
         for (Element element : env.getElementsAnnotatedWith(getAnnotation())) {
             processImplementationAnnotation(element, initializerInfo, elements, types);
         }
     }
 
-    private void processImplementationAnnotation(Element element, LoganSquareWrapperInitializerInfo initializerInfo, Elements elements, Types types) {
+    private void processImplementationAnnotation(Element element, LoganSquareExtensionInitializerInfo initializerInfo, Elements elements, Types types) {
         TypeElement type = (TypeElement) element;
 
         if (element.getModifiers().contains(PRIVATE)) {
@@ -78,8 +77,7 @@ public class ImplementationClassProcessor extends Processor {
             initializerInfo.putImplementation(type, implCls);
             final TypeElement implElement = elements.getTypeElement(implCls.toString());
             final Mapper mapperAnnotation = implElement.getAnnotation(Mapper.class);
-            final Wrapper wrapperAnnotation = implElement.getAnnotation(Wrapper.class);
-            TypeName mapperCls = null, wrapperCls = null;
+            TypeName mapperCls = null;
             if (mapperAnnotation != null) {
                 try {
                     mapperAnnotation.value();
@@ -91,16 +89,6 @@ public class ImplementationClassProcessor extends Processor {
                 mapperCls = getMapperClass(elements, types, implCls);
             }
             initializerInfo.putMapper(type, mapperCls);
-            if (wrapperAnnotation != null) {
-                try {
-                    wrapperAnnotation.value();
-                } catch (MirroredTypeException e) {
-                    wrapperCls = TypeName.get(e.getTypeMirror());
-                }
-            }
-            if (wrapperCls != null) {
-                initializerInfo.putWrapper(type, wrapperCls);
-            }
         }
     }
 

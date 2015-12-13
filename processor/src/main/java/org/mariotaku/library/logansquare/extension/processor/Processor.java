@@ -19,7 +19,7 @@
 
 package org.mariotaku.library.logansquare.extension.processor;
 
-import org.mariotaku.library.logansquare.extension.LoganSquareWrapperInitializerInfo;
+import org.mariotaku.library.logansquare.extension.LoganSquareExtensionInitializerInfo;
 
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
@@ -42,14 +42,13 @@ public abstract class Processor {
 
     public abstract Class<? extends Annotation> getAnnotation();
 
-    public abstract void findAndParseObjects(RoundEnvironment env, LoganSquareWrapperInitializerInfo initializerInfo, Elements elements, Types types);
+    public abstract void findAndParseObjects(RoundEnvironment env, LoganSquareExtensionInitializerInfo initializerInfo, Elements elements, Types types);
 
     public static List<Processor> allProcessors(ProcessingEnvironment processingEnvironment) {
         List<Processor> list = new ArrayList<>();
         list.add(new ImplementationClassProcessor(processingEnvironment));
         list.add(new MapperClassProcessor(processingEnvironment));
         list.add(new EnumClassProcessor(processingEnvironment));
-        list.add(new WrapperClassProcessor(processingEnvironment));
         return list;
     }
 

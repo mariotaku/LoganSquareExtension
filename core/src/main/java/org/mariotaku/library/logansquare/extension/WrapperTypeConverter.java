@@ -19,7 +19,7 @@ public class WrapperTypeConverter<T> implements TypeConverter<T> {
 
     @Override
     public T parse(JsonParser jsonParser) throws IOException {
-        return LoganSquareWrapper.mapperFor(mapperCls).parse(jsonParser).getWrapped(null);
+        return LoganSquareExtension.mapperFor(mapperCls).parse(jsonParser).getWrapped(null);
     }
 
     @Override

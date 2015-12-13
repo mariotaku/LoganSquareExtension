@@ -1,5 +1,14 @@
 allprojects {
-    version = '0.9.4'
+    group = 'com.github.mariotaku.LoganSquareExtension'
+    version = '0.9.5'
+}
+
+buildscript {
+    dependencies {
+    }
+    repositories {
+        jcenter()
+    }
 }
 
 subprojects {

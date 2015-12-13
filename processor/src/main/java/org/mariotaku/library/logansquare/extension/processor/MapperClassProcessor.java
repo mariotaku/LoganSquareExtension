@@ -20,7 +20,7 @@
 package org.mariotaku.library.logansquare.extension.processor;
 
 import com.squareup.javapoet.TypeName;
-import org.mariotaku.library.logansquare.extension.LoganSquareWrapperInitializerInfo;
+import org.mariotaku.library.logansquare.extension.LoganSquareExtensionInitializerInfo;
 import org.mariotaku.library.logansquare.extension.annotation.Mapper;
 
 import javax.annotation.processing.ProcessingEnvironment;
@@ -50,13 +50,13 @@ public class MapperClassProcessor extends Processor {
     }
 
     @Override
-    public void findAndParseObjects(RoundEnvironment env, LoganSquareWrapperInitializerInfo initializerInfo, Elements elements, Types types) {
+    public void findAndParseObjects(RoundEnvironment env, LoganSquareExtensionInitializerInfo initializerInfo, Elements elements, Types types) {
         for (Element element : env.getElementsAnnotatedWith(getAnnotation())) {
             processImplementationAnnotation(element, initializerInfo, elements, types);
         }
     }
 
-    private void processImplementationAnnotation(Element element, LoganSquareWrapperInitializerInfo initializerInfo, Elements elements, Types types) {
+    private void processImplementationAnnotation(Element element, LoganSquareExtensionInitializerInfo initializerInfo, Elements elements, Types types) {
         TypeElement type = (TypeElement) element;
 
         if (element.getModifiers().contains(PRIVATE)) {
